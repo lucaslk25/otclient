@@ -6286,6 +6286,10 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     std::cout << ">>> CALLING cleanDynamicThings()..." << std::endl;
 #endif
     
+    // Save local player before cleaning
+    auto localPlayer = g_game.getLocalPlayer();
+    g_logger.info(">>> Local player before clean: {}", localPlayer ? localPlayer->getName() : "NULL");
+    
     // CRITICAL: Remove all creatures from map before context switch
     // This prevents "no creature found to move" errors
     g_logger.info(">>> About to call cleanDynamicThings()");
@@ -6304,6 +6308,13 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
 #ifdef WIN32
     std::cout << ">>> Cache now active: " << newContextId << std::endl;
 #endif
+    
+    // CRITICAL: Re-enable camera follow for local player
+    // The cleanDynamicThings() disables follow, so we need to restore it
+    if (localPlayer) {
+        g_logger.info(">>> Re-enabling camera follow for local player");
+        g_game.follow(localPlayer);
+    }
     
     // Callback Lua (opcional, para UI)
     g_lua.callGlobalField("g_game", "onContextSwitch", oldContextId, newContextId);
