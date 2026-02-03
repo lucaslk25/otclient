@@ -25,6 +25,9 @@
 #include "staticdata.h"
 #include "framework/core/inputevent.h"
 #include "framework/ui/declarations.h"
+#include <chrono>
+#include <memory>
+#include <unordered_map>
 
 class TileBlock
 {
@@ -210,7 +213,11 @@ public:
     Position getCentralPosition() { return m_centralPosition; }
     uint8_t getFirstAwareFloor() const;
     uint8_t getLastAwareFloor() const;
-    const std::vector<MissilePtr>& getFloorMissiles(const uint8_t z) { return m_floors[z].missiles; }
+    const std::vector<MissilePtr>& getFloorMissiles(const uint8_t z) { 
+        auto* cache = getActiveCache();
+        static std::vector<MissilePtr> emptyMissiles;
+        return cache ? cache->floors[z].missiles : emptyMissiles;
+    }
 
     std::vector<AnimatedTextPtr> getAnimatedTexts() { return m_animatedTexts; }
     std::vector<StaticTextPtr> getStaticTexts() { return m_staticTexts; }
@@ -231,19 +238,44 @@ public:
     bool isSightClear(const Position& fromPos, const Position& toPos);
 
     const auto& getCreatures() const { return m_knownCreatures; }
-
-private:
+    
+    // Context-aware cache structures (public for return types)
     struct FloorData
     {
         std::vector<MissilePtr> missiles;
         std::unordered_map<uint32_t, TileBlock > tileBlocks;
     };
 
+    struct ContextCache
+    {
+        uint32_t contextId;
+        std::vector<FloorData> floors;
+        std::chrono::steady_clock::time_point lastAccess;
+        
+        ContextCache(uint32_t id) : contextId(id) {
+            floors.resize(g_gameConfig.getMapMaxZ() + 1);
+            lastAccess = std::chrono::steady_clock::now();
+        }
+    };
+    
+    // Context-aware cache management
+    void setCurrentContext(uint32_t contextId);
+    uint32_t getCurrentContext() const { return m_currentContextId; }
+    ContextCache* getActiveCache();
+    ContextCache* getOrCreateCache(uint32_t contextId);
+    void clearContextCache(uint32_t contextId);
+    void cleanupInactiveCaches(int timeoutSeconds = 300);
+
+private:
+
     void removeUnawareThings();
 
     uint16_t getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
 
-    std::vector<FloorData> m_floors;
+    // REMOVIDO: std::vector<FloorData> m_floors;
+    // ADICIONADO: Context-aware cache system
+    std::unordered_map<uint32_t, std::unique_ptr<ContextCache>> m_contextCaches;
+    uint32_t m_currentContextId = 0;
 
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;

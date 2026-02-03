@@ -153,6 +153,9 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 case Proto::GameServerCreatureTyping:
                     parseCreatureTyping(msg);
                     break;
+                case Proto::GameServerContextSwitch:
+                    parseContextSwitch(msg);
+                    break;
                 case Proto::GameServerAttachedPaperdoll:
                     parseAttachedPaperdoll(msg);
                     break;
@@ -6265,6 +6268,20 @@ void ProtocolGame::parseCreatureTyping(const InputMessagePtr& msg)
     }
 
     creature->setTyping(typing);
+}
+
+void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
+{
+    const uint32_t newContextId = msg->getU32();
+    const uint32_t oldContextId = g_map.getCurrentContext();
+    
+    g_logger.info("Context switch received: {} -> {}", oldContextId, newContextId);
+    
+    // Muda o cache ativo
+    g_map.setCurrentContext(newContextId);
+    
+    // Callback Lua (opcional, para UI)
+    g_lua.callGlobalField("g_game", "onContextSwitch", oldContextId, newContextId);
 }
 
 void ProtocolGame::parseFeatures(const InputMessagePtr& msg)

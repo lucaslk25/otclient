@@ -303,9 +303,12 @@ void Map::saveOtbm(const std::string& fileName)
                 int py = -1;
                 int pz = -1;
                 bool firstNode = true;
+                
+                auto* cache = getActiveCache();
+                if (!cache) return;
 
                 for (uint8_t z = 0; z <= g_gameConfig.getMapMaxZ(); ++z) {
-                    for (const auto& it : m_floors[z].tileBlocks) {
+                    for (const auto& it : cache->floors[z].tileBlocks) {
                         const TileBlock& block = it.second;
                         for (const TilePtr& tile : block.getTiles()) {
                             if (unlikely(!tile || tile->isEmpty()))
@@ -506,9 +509,12 @@ void Map::saveOtcm(const std::string& fileName)
         fin->seek(4);
         fin->addU16(start);
         fin->seek(start);
+        
+        auto* cache = getActiveCache();
+        if (!cache) return;
 
         for (uint8_t z = 0; z <= g_gameConfig.getMapMaxZ(); ++z) {
-            for (const auto& it : m_floors[z].tileBlocks) {
+            for (const auto& it : cache->floors[z].tileBlocks) {
                 const TileBlock& block = it.second;
                 for (const TilePtr& tile : block.getTiles()) {
                     if (!tile || tile->isEmpty())

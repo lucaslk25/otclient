@@ -226,6 +226,7 @@ private:
     void parseFloorDescription(const InputMessagePtr& msg);
     void parseMapDescription(const InputMessagePtr& msg);
     void parseCreatureTyping(const InputMessagePtr& msg);
+    void parseContextSwitch(const InputMessagePtr& msg);
     void parseFeatures(const InputMessagePtr& msg);
     void parseMapMoveNorth(const InputMessagePtr& msg);
     void parseMapMoveEast(const InputMessagePtr& msg);

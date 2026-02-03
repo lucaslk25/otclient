@@ -72,7 +72,9 @@ void Map::init()
         notificateKeyRelease(inputEvent);
     });
 
-    m_floors.resize(g_gameConfig.getMapMaxZ() + 1);
+    // Initialize global context cache (context 0)
+    m_currentContextId = 0;
+    getOrCreateCache(0);
 
     resetAwareRange();
 
@@ -130,8 +132,11 @@ void Map::clean()
 {
     cleanDynamicThings();
 
-    for (auto i = -1; ++i <= g_gameConfig.getMapMaxZ();)
-        m_floors[i].tileBlocks.clear();
+    // Clear all context caches
+    m_contextCaches.clear();
+    m_currentContextId = 0;
+    // Recreate global cache
+    getOrCreateCache(0);
 
 #ifdef FRAMEWORK_EDITOR
     m_waypoints.clear();
@@ -164,12 +169,12 @@ void Map::cleanDynamicThings()
     for (const auto& widget : widgets)
         widget->destroy();
 
-    for (auto i = -1; ++i <= g_gameConfig.getMapMaxZ();)
-        m_floors[i].missiles.clear();
-
-    for (auto& floor : m_floors) {
-        floor.missiles.clear();
-        floor.tileBlocks.clear();
+    auto* cache = getActiveCache();
+    if (cache) {
+        for (auto& floor : cache->floors) {
+            floor.missiles.clear();
+            floor.tileBlocks.clear();
+        }
     }
 
     cleanTexts();
@@ -186,7 +191,10 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, const int16_t sta
         return;
 
     if (thing->isMissile()) {
-        m_floors[pos.z].missiles.emplace_back(thing->static_self_cast<Missile>());
+        auto* cache = getActiveCache();
+        if (cache) {
+            cache->floors[pos.z].missiles.emplace_back(thing->static_self_cast<Missile>());
+        }
         thing->setPosition(pos);
         thing->onAppear();
         return;
@@ -269,7 +277,9 @@ bool Map::removeThing(const ThingPtr& thing)
         return false;
 
     if (thing->isMissile()) {
-        auto& missiles = m_floors[thing->getServerPosition().z].missiles;
+        auto* cache = getActiveCache();
+        if (!cache) return false;
+        auto& missiles = cache->floors[thing->getServerPosition().z].missiles;
         const auto it = std::ranges::find(missiles, thing->static_self_cast<Missile>());
         if (it == missiles.end())
             return false;
@@ -361,8 +371,19 @@ StaticTextPtr Map::getStaticText(const Position& pos) const
     return nullptr;
 }
 
-const TilePtr& Map::createTile(const Position& pos) { return pos.isMapPosition() ? m_floors[pos.z].tileBlocks[getBlockIndex(pos)].create(pos) : m_nulltile; }
-const TilePtr& Map::getOrCreateTile(const Position& pos) { return pos.isMapPosition() ? m_floors[pos.z].tileBlocks[getBlockIndex(pos)].getOrCreate(pos) : m_nulltile; }
+const TilePtr& Map::createTile(const Position& pos) { 
+    if (!pos.isMapPosition()) return m_nulltile;
+    auto* cache = getActiveCache();
+    if (!cache) return m_nulltile;
+    return cache->floors[pos.z].tileBlocks[getBlockIndex(pos)].create(pos);
+}
+
+const TilePtr& Map::getOrCreateTile(const Position& pos) { 
+    if (!pos.isMapPosition()) return m_nulltile;
+    auto* cache = getActiveCache();
+    if (!cache) return m_nulltile;
+    return cache->floors[pos.z].tileBlocks[getBlockIndex(pos)].getOrCreate(pos);
+}
 
 template <typename... Items>
 const TilePtr& Map::createTileEx(const Position& pos, const Items&... items)
@@ -382,7 +403,11 @@ const TilePtr& Map::getTile(const Position& pos)
     if (!pos.isMapPosition())
         return m_nulltile;
 
-    auto& tileBlocks = m_floors[pos.z].tileBlocks;
+    auto* cache = getActiveCache();
+    if (!cache)
+        return m_nulltile;
+
+    auto& tileBlocks = cache->floors[pos.z].tileBlocks;
 
     const auto it = tileBlocks.find(getBlockIndex(pos));
     if (it != tileBlocks.end())
@@ -397,10 +422,13 @@ TileList Map::getTiles(const int8_t floor/* = -1*/)
     if (floor > g_gameConfig.getMapMaxZ())
         return tiles;
 
+    auto* cache = getActiveCache();
+    if (!cache) return tiles;
+    
     if (floor < 0) {
         // Search all floors
         for (auto z = -1; ++z <= g_gameConfig.getMapMaxZ();) {
-            for (const auto& [key, block] : m_floors[z].tileBlocks) {
+            for (const auto& [key, block] : cache->floors[z].tileBlocks) {
                 for (const auto& tile : block.getTiles()) {
                     if (tile != nullptr)
                         tiles.emplace_back(tile);
@@ -408,7 +436,7 @@ TileList Map::getTiles(const int8_t floor/* = -1*/)
             }
         }
     } else {
-        for (const auto& [key, block] : m_floors[floor].tileBlocks) {
+        for (const auto& [key, block] : cache->floors[floor].tileBlocks) {
             for (const auto& tile : block.getTiles()) {
                 if (tile != nullptr)
                     tiles.emplace_back(tile);
@@ -424,8 +452,12 @@ void Map::cleanTile(const Position& pos)
     if (!pos.isMapPosition())
         return;
 
-    const auto it = m_floors[pos.z].tileBlocks.find(getBlockIndex(pos));
-    if (it != m_floors[pos.z].tileBlocks.end()) {
+    auto* cache = getActiveCache();
+    if (!cache)
+        return;
+
+    const auto it = cache->floors[pos.z].tileBlocks.find(getBlockIndex(pos));
+    if (it != cache->floors[pos.z].tileBlocks.end()) {
         auto& block = it->second;
         if (const auto& tile = block.get(pos)) {
             tile->clean();
@@ -508,9 +540,12 @@ void Map::endGhostMode() { g_painter->resetOpacity(); }
 stdext::map<Position, ItemPtr, Position::Hasher> Map::findItemsById(const uint16_t clientId, const uint32_t  max)
 {
     stdext::map<Position, ItemPtr, Position::Hasher> ret;
+    auto* cache = getActiveCache();
+    if (!cache) return 0;
+    
     uint32_t  count = 0;
     for (uint8_t z = 0; z <= g_gameConfig.getMapMaxZ(); ++z) {
-        for (const auto& [uid, block] : m_floors[z].tileBlocks) {
+        for (const auto& [uid, block] : cache->floors[z].tileBlocks) {
             for (const auto& tile : block.getTiles()) {
                 if (unlikely(!tile || tile->isEmpty()))
                     continue;
@@ -565,6 +600,9 @@ void Map::removeUnawareThings()
     });
 
     if (!g_game.getFeature(Otc::GameKeepUnawareTiles)) {
+        auto* activeCache = getActiveCache();
+        if (!activeCache) return;
+        
         const auto& customAwareRange = g_game.getFeature(Otc::GameMapCache) ? AwareRange{
             .left = static_cast<uint8_t>(m_awareRange.left * 4),
             .top = static_cast<uint8_t>(m_awareRange.top * 4),
@@ -572,9 +610,9 @@ void Map::removeUnawareThings()
             .bottom = static_cast<uint8_t>(m_awareRange.bottom * 4),
         } : m_awareRange;
 
-        // remove tiles that we are not aware anymore
+        // remove tiles that we are not aware anymore (APENAS do cache ativo)
         for (auto z = -1; ++z <= g_gameConfig.getMapMaxZ();) {
-            auto& tileBlocks = m_floors[z].tileBlocks;
+            auto& tileBlocks = activeCache->floors[z].tileBlocks;  // ← Cache do contexto!
             for (auto it = tileBlocks.begin(); it != tileBlocks.end();) {
                 auto& block = it->second;
                 bool blockEmpty = true;
@@ -611,6 +649,14 @@ void Map::setCentralPosition(const Position& centralPosition)
     m_centralPosition = centralPosition;
 
     removeUnawareThings();
+    
+    // Cleanup caches inativos a cada 60 segundos
+    static auto lastCleanup = std::chrono::steady_clock::now();
+    auto now = std::chrono::steady_clock::now();
+    if (std::chrono::duration_cast<std::chrono::seconds>(now - lastCleanup).count() > 60) {
+        cleanupInactiveCaches(300);  // Remove caches inativos por 5 minutos
+        lastCleanup = now;
+    }
 
     // this fixes local player position when the local player is removed from the map,
     // the local player is removed from the map when there are too many creatures on his tile,
@@ -809,6 +855,60 @@ void Map::resetAwareRange() {
         .right = static_cast<uint8_t>(g_gameConfig.getMapViewPort().width() + 1),
         .bottom = static_cast<uint8_t>(g_gameConfig.getMapViewPort().height() + 1)
     });
+}
+
+void Map::setCurrentContext(uint32_t contextId) {
+    if (m_currentContextId == contextId)
+        return;
+    
+    const uint32_t oldContextId = m_currentContextId;
+    m_currentContextId = contextId;
+    getOrCreateCache(contextId);  // Garante que cache existe
+    
+    g_logger.info("Context switched: {} -> {}", oldContextId, contextId);
+}
+
+Map::ContextCache* Map::getActiveCache() {
+    return getOrCreateCache(m_currentContextId);
+}
+
+Map::ContextCache* Map::getOrCreateCache(uint32_t contextId) {
+    auto it = m_contextCaches.find(contextId);
+    if (it == m_contextCaches.end()) {
+        auto cache = std::make_unique<ContextCache>(contextId);
+        auto* ptr = cache.get();
+        m_contextCaches[contextId] = std::move(cache);
+        return ptr;
+    }
+    it->second->lastAccess = std::chrono::steady_clock::now();
+    return it->second.get();
+}
+
+void Map::clearContextCache(uint32_t contextId) {
+    m_contextCaches.erase(contextId);
+}
+
+void Map::cleanupInactiveCaches(int timeoutSeconds) {
+    auto now = std::chrono::steady_clock::now();
+    
+    for (auto it = m_contextCaches.begin(); it != m_contextCaches.end();) {
+        // Nunca remove cache do contexto ativo
+        if (it->first == m_currentContextId) {
+            ++it;
+            continue;
+        }
+        
+        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
+            now - it->second->lastAccess).count();
+        
+        if (elapsed > timeoutSeconds) {
+            g_logger.info("Cleaning up inactive context cache: {} (idle: {}s)",
+                it->first, static_cast<int>(elapsed));
+            it = m_contextCaches.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }
 
 uint8_t Map::getFirstAwareFloor() const
