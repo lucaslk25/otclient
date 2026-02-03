@@ -148,9 +148,17 @@ void Map::clean()
 
 void Map::cleanDynamicThings()
 {
+    g_logger.info(">>> Map::cleanDynamicThings STARTING");
+    
+#ifdef WIN32
+    std::cout << ">>> Map::cleanDynamicThings STARTING" << std::endl;
+#endif
+    
     for (const auto& mapview : m_mapViews)
         mapview->followCreature(nullptr);
 
+    g_logger.info(">>> Cleaning {} known creatures", m_knownCreatures.size());
+    
     for (const auto& [uid, creature] : m_knownCreatures) {
         creature->setWidgetInformation(nullptr);
         removeThing(creature);
@@ -180,6 +188,12 @@ void Map::cleanDynamicThings()
     cleanTexts();
 
     g_lua.collectGarbage();
+    
+    g_logger.info(">>> Map::cleanDynamicThings COMPLETED");
+    
+#ifdef WIN32
+    std::cout << ">>> Map::cleanDynamicThings COMPLETED" << std::endl;
+#endif
 }
 
 void Map::addThing(const ThingPtr& thing, const Position& pos, const int16_t stackPos)
