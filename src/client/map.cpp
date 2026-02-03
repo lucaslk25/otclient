@@ -541,7 +541,7 @@ stdext::map<Position, ItemPtr, Position::Hasher> Map::findItemsById(const uint16
 {
     stdext::map<Position, ItemPtr, Position::Hasher> ret;
     auto* cache = getActiveCache();
-    if (!cache) return 0;
+    if (!cache) return std::move(ret);
     
     uint32_t  count = 0;
     for (uint8_t z = 0; z <= g_gameConfig.getMapMaxZ(); ++z) {
