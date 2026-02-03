@@ -6285,6 +6285,12 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     std::cout << ">>> CONTEXT SWITCH: " << oldContextId << " -> " << newContextId << std::endl;
 #endif
     
+    // CRITICAL: Remove all creatures from map before context switch
+    // This prevents "no creature found to move" errors
+    g_map.cleanDynamicThings();
+    
+    g_logger.info(">>> Creatures cleaned for context switch");
+    
     // Muda o cache ativo
     g_map.setCurrentContext(newContextId);
     
