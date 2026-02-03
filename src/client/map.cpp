@@ -863,7 +863,26 @@ void Map::setCurrentContext(uint32_t contextId) {
     
     const uint32_t oldContextId = m_currentContextId;
     m_currentContextId = contextId;
-    getOrCreateCache(contextId);  // Garante que cache existe
+    
+    g_logger.info(">>> Map::setCurrentContext: {} -> {}", oldContextId, contextId);
+    
+#ifdef WIN32
+    std::cout << ">>> Map::setCurrentContext called: " << oldContextId << " -> " << contextId << std::endl;
+#endif
+    
+    auto* cache = getOrCreateCache(contextId);  // Garante que cache existe
+    
+    if (cache) {
+        g_logger.info(">>> Cache created/retrieved for context: {}", contextId);
+#ifdef WIN32
+        std::cout << ">>> Cache active for context: " << contextId << std::endl;
+#endif
+    } else {
+        g_logger.error(">>> FAILED to create cache for context: {}", contextId);
+#ifdef WIN32
+        std::cout << ">>> ERROR: Failed to create cache!" << std::endl;
+#endif
+    }
     
     g_logger.info("Context switched: {} -> {}", oldContextId, contextId);
 }

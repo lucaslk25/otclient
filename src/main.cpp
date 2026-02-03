@@ -73,6 +73,17 @@ void printHelp(const std::string& executableName)
 
     int main(const int argc, const char* argv[])
     {
+#ifdef WIN32
+        // Allocate console for debug output on Windows
+        AllocConsole();
+        FILE* pCout;
+        freopen_s(&pCout, "CONOUT$", "w", stdout);
+        freopen_s(&pCout, "CONOUT$", "w", stderr);
+        std::cout << "=== OTClient Debug Console ===" << std::endl;
+        std::cout << "Context-Aware Cache System Active" << std::endl;
+        std::cout << "=================================" << std::endl;
+#endif
+
         std::vector<std::string> args(argv, argv + argc);
 
         // process args encoding

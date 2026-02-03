@@ -154,6 +154,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                     parseCreatureTyping(msg);
                     break;
                 case Proto::GameServerContextSwitch:
+                    g_logger.info(">>> Packet 0x39 (ContextSwitch) received!");
+#ifdef WIN32
+                    std::cout << ">>> Packet 0x39 received, calling parseContextSwitch()" << std::endl;
+#endif
                     parseContextSwitch(msg);
                     break;
                 case Proto::GameServerAttachedPaperdoll:
@@ -6275,10 +6279,20 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     const uint32_t newContextId = msg->getU32();
     const uint32_t oldContextId = g_map.getCurrentContext();
     
-    g_logger.info("Context switch received: {} -> {}", oldContextId, newContextId);
+    g_logger.info(">>> CONTEXT SWITCH RECEIVED: {} -> {}", oldContextId, newContextId);
+    
+#ifdef WIN32
+    std::cout << ">>> CONTEXT SWITCH: " << oldContextId << " -> " << newContextId << std::endl;
+#endif
     
     // Muda o cache ativo
     g_map.setCurrentContext(newContextId);
+    
+    g_logger.info(">>> Cache switched to context: {}", newContextId);
+    
+#ifdef WIN32
+    std::cout << ">>> Cache now active: " << newContextId << std::endl;
+#endif
     
     // Callback Lua (opcional, para UI)
     g_lua.callGlobalField("g_game", "onContextSwitch", oldContextId, newContextId);
