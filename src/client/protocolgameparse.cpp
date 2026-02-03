@@ -6283,13 +6283,18 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     
 #ifdef WIN32
     std::cout << ">>> CONTEXT SWITCH: " << oldContextId << " -> " << newContextId << std::endl;
+    std::cout << ">>> CALLING cleanDynamicThings()..." << std::endl;
 #endif
     
     // CRITICAL: Remove all creatures from map before context switch
     // This prevents "no creature found to move" errors
+    g_logger.info(">>> About to call cleanDynamicThings()");
     g_map.cleanDynamicThings();
-    
     g_logger.info(">>> Creatures cleaned for context switch");
+    
+#ifdef WIN32
+    std::cout << ">>> Creatures cleaned!" << std::endl;
+#endif
     
     // Muda o cache ativo
     g_map.setCurrentContext(newContextId);
