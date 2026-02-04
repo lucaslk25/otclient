@@ -1409,15 +1409,11 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
         m_mapKnown = true;
     }
 
-    // CRITICAL: Map description received after context switch, now we can process movements again
-    // BUT: Don't reset flag immediately - schedule it for next event cycle to ensure stale movements are filtered
+    // CRITICAL: Map description received after context switch
+    // Server is now blocking movements during transition, so we can safely resume
     if (m_waitingMapAfterContextSwitch) {
-        g_logger.info(">>> Map description received, scheduling flag reset for next cycle");
-        // Use dispatcher to reset flag AFTER all current packets are processed
-        g_dispatcher.addEvent([this] {
-            m_waitingMapAfterContextSwitch = false;
-            g_logger.info(">>> NOW resuming creature movement processing (flag reset)");
-        });
+        m_waitingMapAfterContextSwitch = false;
+        g_logger.info(">>> Map description received, resuming creature movement processing");
     }
 
     g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapDescription"); });
@@ -1514,10 +1510,8 @@ void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg) const
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 {
-    g_logger.info(">>> parseCreatureMove CALLED, flag={}", m_waitingMapAfterContextSwitch);
-    
     // CRITICAL: Ignore creature movements if waiting for map description after context switch
-    // These are stale movements from before the context switch
+    // Server should be blocking movements during transition, but this is a safety net
     if (m_waitingMapAfterContextSwitch) {
         g_logger.info(">>> Ignoring creature move (waiting for map after context switch)");
         // Still need to consume the message bytes
@@ -1526,7 +1520,6 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
         return;
     }
 
-    g_logger.info(">>> Processing creature move (flag is false)");
     const auto& thing = getMappedThing(msg);
     const auto& newPos = getPosition(msg);
 
