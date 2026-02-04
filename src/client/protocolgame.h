@@ -416,6 +416,7 @@ private:
     bool m_firstRecv{ true };
     bool m_record{ false };
     bool m_waitingMapAfterContextSwitch{ false };
+    int m_contextSwitchSafePacketsRemaining{ 0 };  // Number of packets to keep ignoring after map description
 
     ticks_t m_lastPartyAnalyzerCall{ 0 };
     int m_recivedPackeds = 0;

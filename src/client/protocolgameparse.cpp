@@ -62,16 +62,26 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 }
             }
 
-            // CRITICAL: During context switch, ignore ALL map/creature opcodes EXCEPT GameServerFullMap
+            // CRITICAL: During context switch, ignore ALL map/creature opcodes
             // This prevents errors from stale packets that were queued before the context switch
-            if (m_waitingMapAfterContextSwitch) {
-                // GameServerFullMap (0x64 = 100) resets the flag and is processed normally
+            // 
+            // Strategy: 
+            // - m_waitingMapAfterContextSwitch = true means we're waiting for MapDescription
+            // - m_contextSwitchSafePacketsRemaining > 0 means we're still ignoring stale packets
+            //   that may arrive AFTER the MapDescription due to TCP buffering
+            
+            // Check if we should skip problematic opcodes
+            bool shouldSkipMapOpcodes = m_waitingMapAfterContextSwitch || m_contextSwitchSafePacketsRemaining > 0;
+            
+            if (shouldSkipMapOpcodes) {
+                // GameServerFullMap (0x64 = 100) - process it, then start the "safe window"
                 if (opcode == Proto::GameServerFullMap) {
-                    g_logger.info(">>> [ContextSwitch] Received MapDescription, ending ignore mode");
+                    g_logger.info(">>> [ContextSwitch] Received MapDescription, starting safe window (50 packets)");
 #ifdef WIN32
-                    std::cout << ">>> [ContextSwitch] MapDescription received, ending ignore mode" << std::endl;
+                    std::cout << ">>> [ContextSwitch] MapDescription received, starting 50-packet safe window" << std::endl;
 #endif
                     m_waitingMapAfterContextSwitch = false;
+                    m_contextSwitchSafePacketsRemaining = 50;  // Keep ignoring stale opcodes for 50 more packets
                     // Continue to process this opcode normally
                 }
                 // These opcodes reference map/creatures and must be skipped during transition
@@ -97,17 +107,27 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                          opcode == Proto::GameServerCreatureUnpass ||   // 146 (0x92)
                          opcode == Proto::GameServerCreatureMarks ||    // 147
                          opcode == Proto::GameServerCreatureType) {     // 149
-                    g_logger.info(">>> [ContextSwitch] SKIPPING opcode {} (0x{:02X}) during context switch", opcode, opcode);
+                    g_logger.info(">>> [ContextSwitch] SKIPPING opcode {} (0x{:02X}) - waiting={} safeRemaining={}", 
+                        opcode, opcode, m_waitingMapAfterContextSwitch, m_contextSwitchSafePacketsRemaining);
 #ifdef WIN32
                     std::cout << ">>> [ContextSwitch] SKIPPING opcode " << opcode << " (0x" << std::hex << opcode << std::dec << ")" << std::endl;
 #endif
-                    // Skip this opcode by calling the parse function but marking it to be skipped
-                    // We need to consume the bytes without processing
+                    // Skip this opcode by consuming the bytes without processing
                     skipOpcodeDataDuringContextSwitch(msg, opcode);
                     prevOpcode = opcode;
                     continue;
                 }
                 // All other opcodes (text messages, player stats, etc.) are processed normally
+                // But decrement the safe counter
+                if (m_contextSwitchSafePacketsRemaining > 0) {
+                    m_contextSwitchSafePacketsRemaining--;
+                    if (m_contextSwitchSafePacketsRemaining == 0) {
+                        g_logger.info(">>> [ContextSwitch] Safe window ended, resuming normal operation");
+#ifdef WIN32
+                        std::cout << ">>> [ContextSwitch] Safe window ended" << std::endl;
+#endif
+                    }
+                }
             }
 
             // try to parse in lua first
@@ -6375,7 +6395,9 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
 #endif
     
     // CRITICAL: Set flag to ignore creature movements until map description arrives
+    // Also reset the safe packet counter
     m_waitingMapAfterContextSwitch = true;
+    m_contextSwitchSafePacketsRemaining = 0;  // Will be set to 50 when map description arrives
     g_logger.info(">>> Waiting for map description, ignoring creature movements");
     
     // CRITICAL: Re-enable camera follow for local player
