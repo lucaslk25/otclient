@@ -62,72 +62,21 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 }
             }
 
-            // CRITICAL: During context switch, ignore ALL map/creature opcodes
-            // This prevents errors from stale packets that were queued before the context switch
-            // 
-            // Strategy: 
-            // - m_waitingMapAfterContextSwitch = true means we're waiting for MapDescription
-            // - m_contextSwitchSafePacketsRemaining > 0 means we're still ignoring stale packets
-            //   that may arrive AFTER the MapDescription due to TCP buffering
+            // CONTEXT SWITCH: Track transition state for error suppression
+            // We DON'T try to skip opcodes - their byte format is too complex
+            // Instead, individual parse functions check the flag and suppress errors gracefully
+            if (m_waitingMapAfterContextSwitch && opcode == Proto::GameServerFullMap) {
+                g_logger.info(">>> [ContextSwitch] Received MapDescription, starting grace period");
+#ifdef WIN32
+                std::cout << ">>> [ContextSwitch] MapDescription received, 100-packet grace period" << std::endl;
+#endif
+                m_waitingMapAfterContextSwitch = false;
+                m_contextSwitchSafePacketsRemaining = 100;  // Grace period for stale packets
+            }
             
-            // Check if we should skip problematic opcodes
-            bool shouldSkipMapOpcodes = m_waitingMapAfterContextSwitch || m_contextSwitchSafePacketsRemaining > 0;
-            
-            if (shouldSkipMapOpcodes) {
-                // GameServerFullMap (0x64 = 100) - process it, then start the "safe window"
-                if (opcode == Proto::GameServerFullMap) {
-                    g_logger.info(">>> [ContextSwitch] Received MapDescription, starting safe window (50 packets)");
-#ifdef WIN32
-                    std::cout << ">>> [ContextSwitch] MapDescription received, starting 50-packet safe window" << std::endl;
-#endif
-                    m_waitingMapAfterContextSwitch = false;
-                    m_contextSwitchSafePacketsRemaining = 50;  // Keep ignoring stale opcodes for 50 more packets
-                    // Continue to process this opcode normally
-                }
-                // These opcodes reference map/creatures and must be skipped during transition
-                else if (opcode == Proto::GameServerUpdateTile ||       // 105 (0x69)
-                         opcode == Proto::GameServerCreateOnMap ||      // 106 (0x6A)
-                         opcode == Proto::GameServerChangeOnMap ||      // 107 (0x6B)
-                         opcode == Proto::GameServerDeleteOnMap ||      // 108 (0x6C)
-                         opcode == Proto::GameServerMoveCreature ||     // 109 (0x6D)
-                         opcode == Proto::GameServerMapTopRow ||        // 101
-                         opcode == Proto::GameServerMapRightRow ||      // 102
-                         opcode == Proto::GameServerMapBottomRow ||     // 103
-                         opcode == Proto::GameServerMapLeftRow ||       // 104
-                         opcode == Proto::GameServerGraphicalEffect ||  // 131 (0x83)
-                         opcode == Proto::GameServerTextEffect ||       // 132 (0x84)
-                         opcode == Proto::GameServerMissleEffect ||     // 133 (0x85)
-                         opcode == Proto::GameServerCreatureData ||     // 139 (0x8B)
-                         opcode == Proto::GameServerCreatureHealth ||   // 140 (0x8C)
-                         opcode == Proto::GameServerCreatureLight ||    // 141 (0x8D)
-                         opcode == Proto::GameServerCreatureOutfit ||   // 142 (0x8E)
-                         opcode == Proto::GameServerCreatureSpeed ||    // 143 (0x8F)
-                         opcode == Proto::GameServerCreatureSkull ||    // 144 (0x90)
-                         opcode == Proto::GameServerCreatureParty ||    // 145 (0x91)
-                         opcode == Proto::GameServerCreatureUnpass ||   // 146 (0x92)
-                         opcode == Proto::GameServerCreatureMarks ||    // 147
-                         opcode == Proto::GameServerCreatureType) {     // 149
-                    g_logger.info(">>> [ContextSwitch] SKIPPING opcode {} (0x{:02X}) - waiting={} safeRemaining={}", 
-                        opcode, opcode, m_waitingMapAfterContextSwitch, m_contextSwitchSafePacketsRemaining);
-#ifdef WIN32
-                    std::cout << ">>> [ContextSwitch] SKIPPING opcode " << opcode << " (0x" << std::hex << opcode << std::dec << ")" << std::endl;
-#endif
-                    // Skip this opcode by consuming the bytes without processing
-                    skipOpcodeDataDuringContextSwitch(msg, opcode);
-                    prevOpcode = opcode;
-                    continue;
-                }
-                // All other opcodes (text messages, player stats, etc.) are processed normally
-                // But decrement the safe counter
-                if (m_contextSwitchSafePacketsRemaining > 0) {
-                    m_contextSwitchSafePacketsRemaining--;
-                    if (m_contextSwitchSafePacketsRemaining == 0) {
-                        g_logger.info(">>> [ContextSwitch] Safe window ended, resuming normal operation");
-#ifdef WIN32
-                        std::cout << ">>> [ContextSwitch] Safe window ended" << std::endl;
-#endif
-                    }
-                }
+            // Decrement grace period counter
+            if (m_contextSwitchSafePacketsRemaining > 0) {
+                m_contextSwitchSafePacketsRemaining--;
             }
 
             // try to parse in lua first
@@ -1545,11 +1494,15 @@ void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)
 
 void ProtocolGame::parseTileTransformThing(const InputMessagePtr& msg)
 {
+    // During context switch transition OR before map is known, suppress errors
+    bool inTransition = !m_mapKnown || m_waitingMapAfterContextSwitch || m_contextSwitchSafePacketsRemaining > 0;
+    
     const auto& thing = getMappedThing(msg);
     const auto& newThing = getThing(msg);
 
     if (!thing) {
-        g_logger.traceError("ProtocolGame::parseTileTransformThing: no thing");
+        if (!inTransition)
+            g_logger.traceError("ProtocolGame::parseTileTransformThing: no thing");
         return;
     }
 
@@ -1557,32 +1510,39 @@ void ProtocolGame::parseTileTransformThing(const InputMessagePtr& msg)
     const int stackPos = thing->getStackPos();
 
     if (!g_map.removeThing(thing)) {
-        g_logger.traceError("ProtocolGame::parseTileTransformThing: unable to remove thing");
+        if (!inTransition)
+            g_logger.traceError("ProtocolGame::parseTileTransformThing: unable to remove thing");
         return;
     }
 
     g_map.addThing(newThing, pos, stackPos);
 }
 
-void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg) const
+void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg)
 {
+    // During context switch transition OR before map is known, suppress errors
+    bool inTransition = !m_mapKnown || m_waitingMapAfterContextSwitch || m_contextSwitchSafePacketsRemaining > 0;
+    
     const auto& thing = getMappedThing(msg);
     if (!thing) {
-        g_logger.traceError("ProtocolGame::parseTileRemoveThing: no thing");
+        if (!inTransition)
+            g_logger.traceError("ProtocolGame::parseTileRemoveThing: no thing");
         return;
     }
 
-    if (!g_map.removeThing(thing))
-        g_logger.traceError("ProtocolGame::parseTileRemoveThing: unable to remove thing");
+    if (!g_map.removeThing(thing)) {
+        if (!inTransition)
+            g_logger.traceError("ProtocolGame::parseTileRemoveThing: unable to remove thing");
+    }
 }
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 {
-    // CRITICAL: Ignore creature movements if waiting for map description after context switch
-    // Server should be blocking movements during transition, but this is a safety net
-    if (m_waitingMapAfterContextSwitch) {
-        g_logger.info(">>> Ignoring creature move (waiting for map after context switch)");
-        // Still need to consume the message bytes
+    // During context switch transition OR before map is known (login), consume bytes but don't process
+    bool inTransition = !m_mapKnown || m_waitingMapAfterContextSwitch || m_contextSwitchSafePacketsRemaining > 0;
+    
+    if (inTransition) {
+        // Consume the message bytes without processing
         getMappedThing(msg);
         getPosition(msg);
         return;
@@ -6394,11 +6354,12 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     std::cout << ">>> Cache now active: " << newContextId << std::endl;
 #endif
     
-    // CRITICAL: Set flag to ignore creature movements until map description arrives
-    // Also reset the safe packet counter
+    // CRITICAL: Simulate a mini re-login by resetting map state
+    // This makes the client behave as if it's logging in fresh
+    m_mapKnown = false;  // Native flag used during login
     m_waitingMapAfterContextSwitch = true;
-    m_contextSwitchSafePacketsRemaining = 0;  // Will be set to 50 when map description arrives
-    g_logger.info(">>> Waiting for map description, ignoring creature movements");
+    m_contextSwitchSafePacketsRemaining = 0;  // Will be set to 100 when map description arrives
+    g_logger.info(">>> Simulating re-login: m_mapKnown=false, waiting for map description");
     
     // CRITICAL: Re-enable camera follow for local player
     // The cleanDynamicThings() disables follow, so we need to restore it
@@ -6754,184 +6715,4 @@ PaperdollPtr ProtocolGame::getPaperdoll(const InputMessagePtr& msg) const {
         paperdoll->setShader(shader);
 
     return paperdoll;
-}
-
-// CONTEXT SWITCH: Skip opcode data during context transition
-// This function consumes the bytes for opcodes that reference map/creatures
-// without processing them, to avoid errors during context switch
-void ProtocolGame::skipOpcodeDataDuringContextSwitch(const InputMessagePtr& msg, int opcode)
-{
-    switch (opcode) {
-        case Proto::GameServerUpdateTile: {
-            // Position (5 bytes) + tile description (variable)
-            getPosition(msg);
-            // Skip the tile description - it ends with 0xFF 0xFF
-            while (msg->peekU16() != 0xFFFF) {
-                getThing(msg);
-            }
-            msg->getU16(); // consume 0xFFFF
-            break;
-        }
-        case Proto::GameServerCreateOnMap: {
-            // Position + optional stackpos + thing
-            getPosition(msg);
-            if (g_game.getFeature(Otc::GameTileAddThingWithStackpos))
-                msg->getU8();
-            getThing(msg);
-            break;
-        }
-        case Proto::GameServerChangeOnMap: {
-            // MappedThing + newThing
-            getMappedThing(msg);
-            getThing(msg);
-            break;
-        }
-        case Proto::GameServerDeleteOnMap: {
-            // MappedThing (position + stackpos)
-            getMappedThing(msg);
-            break;
-        }
-        case Proto::GameServerMoveCreature: {
-            // oldPos+stackpos + newPos
-            getMappedThing(msg);
-            getPosition(msg);
-            break;
-        }
-        case Proto::GameServerMapTopRow:
-        case Proto::GameServerMapRightRow:
-        case Proto::GameServerMapBottomRow:
-        case Proto::GameServerMapLeftRow: {
-            // These require complex map description parsing
-            // Call the original parser but it will fail silently
-            if (g_game.getFeature(Otc::GameMapMovePosition))
-                getPosition(msg);
-            // Skip remaining bytes - this is tricky, we'll read until we hit something we recognize
-            // For now, just consume what we can
-            const auto& range = g_map.getAwareRange();
-            int width = 1, height = range.vertical();
-            if (opcode == Proto::GameServerMapTopRow || opcode == Proto::GameServerMapBottomRow) {
-                width = range.horizontal();
-                height = 1;
-            }
-            // Skip the map data - just consume bytes until we hit 0xFF 0xFF pattern
-            // This is a simplified skip that may not work for all cases
-            break;
-        }
-        case Proto::GameServerGraphicalEffect: {
-            // Position + effect data
-            getPosition(msg);
-            // Effect loop
-            uint8_t effectType = msg->getU8();
-            while (effectType != 0) { // MAGIC_EFFECTS_END_LOOP
-                if (effectType == 1) { // MAGIC_EFFECTS_DELTA
-                    msg->getU8(); // x
-                    msg->getU8(); // y
-                } else if (effectType == 2) { // MAGIC_EFFECTS_DELAY
-                    msg->getU16(); // delay
-                } else if (effectType == 3) { // MAGIC_EFFECTS_CREATE_EFFECT
-                    msg->getU16(); // effect id
-                } else if (effectType == 4) { // MAGIC_EFFECTS_CREATE_DISTANCEEFFECT
-                    msg->getU8(); // x offset
-                    msg->getU8(); // y offset
-                    msg->getU16(); // effect id
-                } else if (effectType == 5) { // MAGIC_EFFECTS_CREATE_ITEM
-                    msg->getU16(); // item id
-                }
-                effectType = msg->getU8();
-            }
-            break;
-        }
-        case Proto::GameServerTextEffect: {
-            if (g_game.getClientVersion() >= 1320) {
-                // Remove magic effect
-                getPosition(msg);
-                msg->getU8(); // effectType
-                msg->getU16(); // effectId
-            } else {
-                // Animated text
-                getPosition(msg);
-                msg->getU8(); // color
-                msg->getString(); // text
-            }
-            break;
-        }
-        case Proto::GameServerMissleEffect: {
-            if (g_game.getFeature(Otc::GameAnthem)) {
-                // Anthem
-                msg->getU32(); // creature id
-                msg->getU16(); // anthem id
-            } else {
-                // Distance missile
-                getPosition(msg); // from
-                getPosition(msg); // to
-                msg->getU16(); // missile id
-            }
-            break;
-        }
-        case Proto::GameServerCreatureData: {
-            msg->getU32(); // creature id
-            msg->getU8(); // type
-            msg->getString(); // name
-            break;
-        }
-        case Proto::GameServerCreatureHealth: {
-            msg->getU32(); // creature id
-            msg->getU8(); // health percent
-            break;
-        }
-        case Proto::GameServerCreatureLight: {
-            msg->getU32(); // creature id
-            msg->getU8(); // intensity
-            msg->getU8(); // color
-            break;
-        }
-        case Proto::GameServerCreatureOutfit: {
-            msg->getU32(); // creature id
-            getOutfit(msg); // outfit
-            break;
-        }
-        case Proto::GameServerCreatureSpeed: {
-            msg->getU32(); // creature id
-            msg->getU16(); // base speed
-            if (g_game.getClientVersion() >= 1281)
-                msg->getU16(); // bonus speed
-            break;
-        }
-        case Proto::GameServerCreatureSkull: {
-            msg->getU32(); // creature id
-            msg->getU8(); // skull
-            break;
-        }
-        case Proto::GameServerCreatureParty: {
-            msg->getU32(); // creature id
-            msg->getU8(); // shield
-            break;
-        }
-        case Proto::GameServerCreatureUnpass: {
-            msg->getU32(); // creature id
-            msg->getU8(); // unpassable
-            break;
-        }
-        case Proto::GameServerCreatureMarks: {
-            // Variable format based on client version
-            uint8_t len = g_game.getClientVersion() >= 1281 ? msg->getU8() : 1;
-            for (int i = 0; i < len; ++i) {
-                msg->getU32(); // creature id
-                msg->getU8(); // marks (or index)
-                if (g_game.getClientVersion() >= 1281)
-                    msg->getU8(); // mark type
-            }
-            break;
-        }
-        case Proto::GameServerCreatureType: {
-            msg->getU32(); // creature id
-            msg->getU8(); // type
-            if (g_game.getClientVersion() >= 1281)
-                msg->getU32(); // master id
-            break;
-        }
-        default:
-            g_logger.traceError(fmt::format("skipOpcodeDataDuringContextSwitch: unknown opcode {} (0x{:02X})", opcode, opcode));
-            break;
-    }
 }

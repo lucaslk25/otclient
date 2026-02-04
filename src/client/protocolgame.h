@@ -235,7 +235,7 @@ private:
     void parseUpdateTile(const InputMessagePtr& msg);
     void parseTileAddThing(const InputMessagePtr& msg);
     void parseTileTransformThing(const InputMessagePtr& msg);
-    void parseTileRemoveThing(const InputMessagePtr& msg) const;
+    void parseTileRemoveThing(const InputMessagePtr& msg);
     void parseCreatureMove(const InputMessagePtr& msg);
     void parseOpenContainer(const InputMessagePtr& msg);
     void parseCloseContainer(const InputMessagePtr& msg);
@@ -407,8 +407,6 @@ public:
 
 private:
     PaperdollPtr getPaperdoll(const InputMessagePtr& msg) const;
-
-    void skipOpcodeDataDuringContextSwitch(const InputMessagePtr& msg, int opcode);
 
     bool m_enableSendExtendedOpcode{ false };
     bool m_gameInitialized{ false };
