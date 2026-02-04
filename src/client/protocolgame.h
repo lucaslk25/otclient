@@ -413,6 +413,7 @@ private:
     bool m_mapKnown{ false };
     bool m_firstRecv{ true };
     bool m_record{ false };
+    bool m_waitingMapAfterContextSwitch{ false };
 
     ticks_t m_lastPartyAnalyzerCall{ 0 };
     int m_recivedPackeds = 0;

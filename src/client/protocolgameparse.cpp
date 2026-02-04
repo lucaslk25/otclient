@@ -1409,6 +1409,12 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
         m_mapKnown = true;
     }
 
+    // CRITICAL: Map description received after context switch, now we can process movements again
+    if (m_waitingMapAfterContextSwitch) {
+        m_waitingMapAfterContextSwitch = false;
+        g_logger.info(">>> Map description received, resuming creature movement processing");
+    }
+
     g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapDescription"); });
     g_lua.callGlobalField("g_game", "onTeleport", m_localPlayer, pos, oldPos);
 }
@@ -1503,6 +1509,16 @@ void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg) const
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 {
+    // CRITICAL: Ignore creature movements if waiting for map description after context switch
+    // These are stale movements from before the context switch
+    if (m_waitingMapAfterContextSwitch) {
+        g_logger.info(">>> Ignoring creature move (waiting for map after context switch)");
+        // Still need to consume the message bytes
+        getMappedThing(msg);
+        getPosition(msg);
+        return;
+    }
+
     const auto& thing = getMappedThing(msg);
     const auto& newPos = getPosition(msg);
 
@@ -6308,6 +6324,10 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
 #ifdef WIN32
     std::cout << ">>> Cache now active: " << newContextId << std::endl;
 #endif
+    
+    // CRITICAL: Set flag to ignore creature movements until map description arrives
+    m_waitingMapAfterContextSwitch = true;
+    g_logger.info(">>> Waiting for map description, ignoring creature movements");
     
     // CRITICAL: Re-enable camera follow for local player
     // The cleanDynamicThings() disables follow, so we need to restore it
