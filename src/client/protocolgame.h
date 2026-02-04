@@ -408,6 +408,8 @@ public:
 private:
     PaperdollPtr getPaperdoll(const InputMessagePtr& msg) const;
 
+    void skipOpcodeDataDuringContextSwitch(const InputMessagePtr& msg, int opcode);
+
     bool m_enableSendExtendedOpcode{ false };
     bool m_gameInitialized{ false };
     bool m_mapKnown{ false };
