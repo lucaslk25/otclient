@@ -1410,9 +1410,14 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
     }
 
     // CRITICAL: Map description received after context switch, now we can process movements again
+    // BUT: Don't reset flag immediately - schedule it for next event cycle to ensure stale movements are filtered
     if (m_waitingMapAfterContextSwitch) {
-        m_waitingMapAfterContextSwitch = false;
-        g_logger.info(">>> Map description received, resuming creature movement processing");
+        g_logger.info(">>> Map description received, scheduling flag reset for next cycle");
+        // Use dispatcher to reset flag AFTER all current packets are processed
+        g_dispatcher.addEvent([this] {
+            m_waitingMapAfterContextSwitch = false;
+            g_logger.info(">>> NOW resuming creature movement processing (flag reset)");
+        });
     }
 
     g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapDescription"); });
