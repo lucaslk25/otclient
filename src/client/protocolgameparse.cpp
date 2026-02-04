@@ -1509,6 +1509,8 @@ void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg) const
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 {
+    g_logger.info(">>> parseCreatureMove CALLED, flag={}", m_waitingMapAfterContextSwitch);
+    
     // CRITICAL: Ignore creature movements if waiting for map description after context switch
     // These are stale movements from before the context switch
     if (m_waitingMapAfterContextSwitch) {
@@ -1519,6 +1521,7 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
         return;
     }
 
+    g_logger.info(">>> Processing creature move (flag is false)");
     const auto& thing = getMappedThing(msg);
     const auto& newPos = getPosition(msg);
 
