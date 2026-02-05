@@ -1504,18 +1504,23 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     const auto& newPos = getPosition(msg);
 
     if (!thing || !thing->isCreature()) {
-        // Silently ignore - can happen during context switch when old creatures are gone
-        return;
-    }
-
-    if (!g_map.removeThing(thing)) {
-        // Silently ignore
+        g_logger.warning("[CreatureMove] Creature not found for move to {}", newPos.toString());
         return;
     }
 
     const auto& creature = thing->static_self_cast<Creature>();
-    creature->allowAppearWalk();
+    
+    // Log if this is the local player
+    if (creature == m_localPlayer) {
+        g_logger.info("[CreatureMove] LOCAL PLAYER moving to {}", newPos.toString());
+    }
 
+    if (!g_map.removeThing(thing)) {
+        g_logger.warning("[CreatureMove] Failed to remove creature from map");
+        return;
+    }
+
+    creature->allowAppearWalk();
     g_map.addThing(thing, newPos, -1);
 }
 
