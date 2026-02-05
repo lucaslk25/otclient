@@ -6299,10 +6299,6 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     
     g_logger.info("[ContextSwitch] {} -> {}", oldContextId, newContextId);
     
-    // CRITICAL: Clean all creatures from the map before switching context
-    // This ensures we don't see creatures from the old context
-    g_map.cleanDynamicThings();
-    
     // Update context ID
     g_map.setCurrentContext(newContextId);
     
