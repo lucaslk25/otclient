@@ -1405,11 +1405,6 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
         m_mapKnown = true;
     }
 
-    // Re-enable camera follow after map is loaded (e.g., after context switch or teleport)
-    if (m_localPlayer && !g_game.getFollowingCreature()) {
-        g_logger.info("[MapDescription] Re-enabling camera follow for {}", m_localPlayer->getName());
-        g_game.setFollowingCreature(m_localPlayer);
-    }
 
     g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapDescription"); });
     g_lua.callGlobalField("g_game", "onTeleport", m_localPlayer, pos, oldPos);
@@ -1509,12 +1504,12 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     const auto& newPos = getPosition(msg);
 
     if (!thing || !thing->isCreature()) {
-        g_logger.traceError("ProtocolGame::parseCreatureMove: no creature found to move");
+        // Silently ignore - can happen during context switch when old creatures are gone
         return;
     }
 
     if (!g_map.removeThing(thing)) {
-        g_logger.traceError("ProtocolGame::parseCreatureMove: unable to remove creature");
+        // Silently ignore
         return;
     }
 
@@ -3831,15 +3826,13 @@ ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg) const
         if (const auto& thing = g_map.getThing(pos, stackpos)) {
             return thing;
         }
-
-        g_logger.traceError("no thing at pos:{}, stackpos:{}", pos, stackpos);
+        // Silently return null - caller handles missing things
     } else {
         const uint32_t creatureId = msg->getU32();
         if (const auto& thing = g_map.getCreatureById(creatureId)) {
             return thing;
         }
-
-        g_logger.traceError("ProtocolGame::getMappedThing: no creature with id {}", creatureId);
+        // Silently return null - caller handles missing creatures
     }
 
     return nullptr;
@@ -6283,14 +6276,9 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     
     g_logger.info("[ContextSwitch] {} -> {}", oldContextId, newContextId);
     
-    // Clean dynamic things to sync with server state
-    // Server cleared knownCreatureSet, client must do the same
-    g_logger.info("[ContextSwitch] Cleaning dynamic things...");
-    g_map.cleanDynamicThings();
-    
-    // Update context ID
+    // SIMPLE: Just update context ID, don't clean anything
+    // MapDescription will overwrite tiles as needed
     g_map.setCurrentContext(newContextId);
-    g_logger.info("[ContextSwitch] Context updated, waiting for MapDescription");
     
     // Lua callback for UI updates
     g_lua.callGlobalField("g_game", "onContextSwitch", oldContextId, newContextId);
