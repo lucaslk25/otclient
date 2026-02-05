@@ -3834,26 +3834,18 @@ ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg) const
             return thing;
         }
         
-        // DEBUG: Log what we're looking for
-        g_logger.debug("[getMappedThing] Not found at {} stackpos {}. LocalPlayer at: {}", 
-            pos.toString(), stackpos, 
-            m_localPlayer ? m_localPlayer->getPosition().toString() : "null");
-        
         // Fallback: If localPlayer is at this position, return it
+        // This handles stackpos mismatch after context switch
         if (m_localPlayer && m_localPlayer->getPosition() == pos) {
-            g_logger.debug("[getMappedThing] Returning localPlayer (position match)");
             return m_localPlayer;
         }
         
         // Try to find any creature at this position
         if (const auto& tile = g_map.getTile(pos)) {
             if (const auto& topCreature = tile->getTopCreature()) {
-                g_logger.debug("[getMappedThing] Returning topCreature at {}", pos.toString());
                 return topCreature;
             }
         }
-        
-        g_logger.debug("[getMappedThing] No creature found at {}", pos.toString());
     } else {
         const uint32_t creatureId = msg->getU32();
         if (const auto& thing = g_map.getCreatureById(creatureId)) {
@@ -6307,9 +6299,12 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     
     g_logger.info("[ContextSwitch] {} -> {}", oldContextId, newContextId);
     
-    // SIMPLE: Just update context ID, don't clean anything
-    // MapDescription will overwrite tiles as needed
+    // Update context ID
     g_map.setCurrentContext(newContextId);
+    
+    // CRITICAL: Reset m_mapKnown so the next MapDescription will update player position
+    // Without this, the client keeps the old position and movements fail
+    m_mapKnown = false;
     
     // Lua callback for UI updates
     g_lua.callGlobalField("g_game", "onContextSwitch", oldContextId, newContextId);
