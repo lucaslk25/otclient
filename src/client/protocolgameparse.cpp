@@ -1405,6 +1405,12 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
         m_mapKnown = true;
     }
 
+    // Re-enable camera follow after map is loaded (e.g., after context switch or teleport)
+    if (m_localPlayer && !g_game.getFollowingCreature()) {
+        g_logger.info("[MapDescription] Re-enabling camera follow for {}", m_localPlayer->getName());
+        g_game.setFollowingCreature(m_localPlayer);
+    }
+
     g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapDescription"); });
     g_lua.callGlobalField("g_game", "onTeleport", m_localPlayer, pos, oldPos);
 }
@@ -6275,9 +6281,16 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     const uint32_t newContextId = msg->getU32();
     const uint32_t oldContextId = g_map.getCurrentContext();
     
-    // BABY STEP: Just update context ID, nothing else
-    // MapDescription will update the map state
+    g_logger.info("[ContextSwitch] {} -> {}", oldContextId, newContextId);
+    
+    // Clean dynamic things to sync with server state
+    // Server cleared knownCreatureSet, client must do the same
+    g_logger.info("[ContextSwitch] Cleaning dynamic things...");
+    g_map.cleanDynamicThings();
+    
+    // Update context ID
     g_map.setCurrentContext(newContextId);
+    g_logger.info("[ContextSwitch] Context updated, waiting for MapDescription");
     
     // Lua callback for UI updates
     g_lua.callGlobalField("g_game", "onContextSwitch", oldContextId, newContextId);
