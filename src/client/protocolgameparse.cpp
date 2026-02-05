@@ -1504,10 +1504,17 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     const auto& newPos = getPosition(msg);
 
     if (!thing || !thing->isCreature()) {
-        // Log local player position for debugging
+        // Fallback for local player: move directly using m_localPlayer
         if (m_localPlayer) {
-            g_logger.warning("[CreatureMove] Not found. Target: {} | LocalPlayer at: {}", 
-                newPos.toString(), m_localPlayer->getPosition().toString());
+            const auto oldPos = m_localPlayer->getPosition();
+            g_logger.info("[CreatureMove] FALLBACK: Moving local player {} -> {}", oldPos.toString(), newPos.toString());
+            
+            // Remove from old position if possible
+            g_map.removeThing(m_localPlayer);
+            
+            // Move to new position
+            m_localPlayer->allowAppearWalk();
+            g_map.addThing(m_localPlayer, newPos, -1);
         }
         return;
     }
@@ -1515,23 +1522,22 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     const auto& creature = thing->static_self_cast<Creature>();
     const auto oldPos = creature->getPosition();
     
-    // Log if this is the local player
     if (creature == m_localPlayer) {
         g_logger.info("[CreatureMove] LOCAL PLAYER {} -> {}", oldPos.toString(), newPos.toString());
     }
 
     if (!g_map.removeThing(thing)) {
-        g_logger.warning("[CreatureMove] Failed to remove creature from {}", oldPos.toString());
+        // Try to move anyway for local player
+        if (creature == m_localPlayer) {
+            g_logger.warning("[CreatureMove] Remove failed, forcing move {} -> {}", oldPos.toString(), newPos.toString());
+            creature->allowAppearWalk();
+            g_map.addThing(thing, newPos, -1);
+        }
         return;
     }
 
     creature->allowAppearWalk();
     g_map.addThing(thing, newPos, -1);
-    
-    // Verify player position after move
-    if (creature == m_localPlayer) {
-        g_logger.info("[CreatureMove] After move, LocalPlayer at: {}", m_localPlayer->getPosition().toString());
-    }
 }
 
 void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
@@ -3842,18 +3848,22 @@ ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg) const
             return thing;
         }
         
-        // Fallback: Try to find local player at this position (can happen after context switch)
-        if (m_localPlayer && m_localPlayer->getPosition() == pos) {
-            return m_localPlayer;
+        // Fallback: Try to find any creature at this position
+        if (const auto& tile = g_map.getTile(pos)) {
+            if (const auto& topCreature = tile->getTopCreature()) {
+                g_logger.info("[getMappedThing] Found creature at {} via fallback", pos.toString());
+                return topCreature;
+            }
         }
         
-        // Silently return null - caller handles missing things
+        // Log what we're looking for
+        g_logger.debug("[getMappedThing] Not found at {} stackpos {}", pos.toString(), stackpos);
     } else {
         const uint32_t creatureId = msg->getU32();
         if (const auto& thing = g_map.getCreatureById(creatureId)) {
             return thing;
         }
-        // Silently return null - caller handles missing creatures
+        g_logger.debug("[getMappedThing] Creature ID {} not found", creatureId);
     }
 
     return nullptr;
