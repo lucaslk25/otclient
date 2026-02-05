@@ -148,17 +148,9 @@ void Map::clean()
 
 void Map::cleanDynamicThings()
 {
-    g_logger.info(">>> Map::cleanDynamicThings STARTING");
-    
-#ifdef WIN32
-    std::cout << ">>> Map::cleanDynamicThings STARTING" << std::endl;
-#endif
-    
     for (const auto& mapview : m_mapViews)
         mapview->followCreature(nullptr);
 
-    g_logger.info(">>> Cleaning {} known creatures", m_knownCreatures.size());
-    
     for (const auto& [uid, creature] : m_knownCreatures) {
         creature->setWidgetInformation(nullptr);
         removeThing(creature);
@@ -188,12 +180,6 @@ void Map::cleanDynamicThings()
     cleanTexts();
 
     g_lua.collectGarbage();
-    
-    g_logger.info(">>> Map::cleanDynamicThings COMPLETED");
-    
-#ifdef WIN32
-    std::cout << ">>> Map::cleanDynamicThings COMPLETED" << std::endl;
-#endif
 }
 
 void Map::addThing(const ThingPtr& thing, const Position& pos, const int16_t stackPos)
@@ -875,30 +861,10 @@ void Map::setCurrentContext(uint32_t contextId) {
     if (m_currentContextId == contextId)
         return;
     
-    const uint32_t oldContextId = m_currentContextId;
     m_currentContextId = contextId;
     
-    g_logger.info(">>> Map::setCurrentContext: {} -> {}", oldContextId, contextId);
-    
-#ifdef WIN32
-    std::cout << ">>> Map::setCurrentContext called: " << oldContextId << " -> " << contextId << std::endl;
-#endif
-    
-    auto* cache = getOrCreateCache(contextId);  // Garante que cache existe
-    
-    if (cache) {
-        g_logger.info(">>> Cache created/retrieved for context: {}", contextId);
-#ifdef WIN32
-        std::cout << ">>> Cache active for context: " << contextId << std::endl;
-#endif
-    } else {
-        g_logger.error(">>> FAILED to create cache for context: {}", contextId);
-#ifdef WIN32
-        std::cout << ">>> ERROR: Failed to create cache!" << std::endl;
-#endif
-    }
-    
-    g_logger.info("Context switched: {} -> {}", oldContextId, contextId);
+    // Ensure cache exists for this context
+    getOrCreateCache(contextId);
 }
 
 Map::ContextCache* Map::getActiveCache() {

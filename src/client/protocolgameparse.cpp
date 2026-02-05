@@ -62,23 +62,6 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 }
             }
 
-            // CONTEXT SWITCH: Track transition state for error suppression
-            // We DON'T try to skip opcodes - their byte format is too complex
-            // Instead, individual parse functions check the flag and suppress errors gracefully
-            if (m_waitingMapAfterContextSwitch && opcode == Proto::GameServerFullMap) {
-                g_logger.info(">>> [ContextSwitch] Received MapDescription, starting grace period");
-#ifdef WIN32
-                std::cout << ">>> [ContextSwitch] MapDescription received, 100-packet grace period" << std::endl;
-#endif
-                m_waitingMapAfterContextSwitch = false;
-                m_contextSwitchSafePacketsRemaining = 100;  // Grace period for stale packets
-            }
-            
-            // Decrement grace period counter
-            if (m_contextSwitchSafePacketsRemaining > 0) {
-                m_contextSwitchSafePacketsRemaining--;
-            }
-
             // try to parse in lua first
             const int readPos = msg->getReadPos();
             if (callLuaField<bool>("onOpcode", opcode, msg)) {
@@ -171,10 +154,6 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                     parseCreatureTyping(msg);
                     break;
                 case Proto::GameServerContextSwitch:
-                    g_logger.info(">>> Packet 0x39 (ContextSwitch) received!");
-#ifdef WIN32
-                    std::cout << ">>> Packet 0x39 received, calling parseContextSwitch()" << std::endl;
-#endif
                     parseContextSwitch(msg);
                     break;
                 case Proto::GameServerAttachedPaperdoll:
@@ -1426,13 +1405,6 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
         m_mapKnown = true;
     }
 
-    // CRITICAL: Map description received after context switch
-    // Server is now blocking movements during transition, so we can safely resume
-    if (m_waitingMapAfterContextSwitch) {
-        m_waitingMapAfterContextSwitch = false;
-        g_logger.info(">>> Map description received, resuming creature movement processing");
-    }
-
     g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapDescription"); });
     g_lua.callGlobalField("g_game", "onTeleport", m_localPlayer, pos, oldPos);
 }
@@ -1494,15 +1466,11 @@ void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)
 
 void ProtocolGame::parseTileTransformThing(const InputMessagePtr& msg)
 {
-    // During context switch transition OR before map is known, suppress errors
-    bool inTransition = !m_mapKnown || m_waitingMapAfterContextSwitch || m_contextSwitchSafePacketsRemaining > 0;
-    
     const auto& thing = getMappedThing(msg);
     const auto& newThing = getThing(msg);
 
     if (!thing) {
-        if (!inTransition)
-            g_logger.traceError("ProtocolGame::parseTileTransformThing: no thing");
+        g_logger.traceError("ProtocolGame::parseTileTransformThing: no thing");
         return;
     }
 
@@ -1510,8 +1478,7 @@ void ProtocolGame::parseTileTransformThing(const InputMessagePtr& msg)
     const int stackPos = thing->getStackPos();
 
     if (!g_map.removeThing(thing)) {
-        if (!inTransition)
-            g_logger.traceError("ProtocolGame::parseTileTransformThing: unable to remove thing");
+        g_logger.traceError("ProtocolGame::parseTileTransformThing: unable to remove thing");
         return;
     }
 
@@ -1520,34 +1487,18 @@ void ProtocolGame::parseTileTransformThing(const InputMessagePtr& msg)
 
 void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg)
 {
-    // During context switch transition OR before map is known, suppress errors
-    bool inTransition = !m_mapKnown || m_waitingMapAfterContextSwitch || m_contextSwitchSafePacketsRemaining > 0;
-    
     const auto& thing = getMappedThing(msg);
     if (!thing) {
-        if (!inTransition)
-            g_logger.traceError("ProtocolGame::parseTileRemoveThing: no thing");
+        g_logger.traceError("ProtocolGame::parseTileRemoveThing: no thing");
         return;
     }
 
-    if (!g_map.removeThing(thing)) {
-        if (!inTransition)
-            g_logger.traceError("ProtocolGame::parseTileRemoveThing: unable to remove thing");
-    }
+    if (!g_map.removeThing(thing))
+        g_logger.traceError("ProtocolGame::parseTileRemoveThing: unable to remove thing");
 }
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 {
-    // During context switch transition OR before map is known (login), consume bytes but don't process
-    bool inTransition = !m_mapKnown || m_waitingMapAfterContextSwitch || m_contextSwitchSafePacketsRemaining > 0;
-    
-    if (inTransition) {
-        // Consume the message bytes without processing
-        getMappedThing(msg);
-        getPosition(msg);
-        return;
-    }
-
     const auto& thing = getMappedThing(msg);
     const auto& newPos = getPosition(msg);
 
@@ -6324,51 +6275,11 @@ void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
     const uint32_t newContextId = msg->getU32();
     const uint32_t oldContextId = g_map.getCurrentContext();
     
-    g_logger.info(">>> CONTEXT SWITCH RECEIVED: {} -> {}", oldContextId, newContextId);
-    
-#ifdef WIN32
-    std::cout << ">>> CONTEXT SWITCH: " << oldContextId << " -> " << newContextId << std::endl;
-    std::cout << ">>> CALLING cleanDynamicThings()..." << std::endl;
-#endif
-    
-    // Save local player before cleaning
-    auto localPlayer = g_game.getLocalPlayer();
-    g_logger.info(">>> Local player before clean: {}", localPlayer ? localPlayer->getName() : "NULL");
-    
-    // CRITICAL: Remove all creatures from map before context switch
-    // This prevents "no creature found to move" errors
-    g_logger.info(">>> About to call cleanDynamicThings()");
-    g_map.cleanDynamicThings();
-    g_logger.info(">>> Creatures cleaned for context switch");
-    
-#ifdef WIN32
-    std::cout << ">>> Creatures cleaned!" << std::endl;
-#endif
-    
-    // Muda o cache ativo
+    // BABY STEP: Just update context ID, nothing else
+    // MapDescription will update the map state
     g_map.setCurrentContext(newContextId);
     
-    g_logger.info(">>> Cache switched to context: {}", newContextId);
-    
-#ifdef WIN32
-    std::cout << ">>> Cache now active: " << newContextId << std::endl;
-#endif
-    
-    // CRITICAL: Simulate a mini re-login by resetting map state
-    // This makes the client behave as if it's logging in fresh
-    m_mapKnown = false;  // Native flag used during login
-    m_waitingMapAfterContextSwitch = true;
-    m_contextSwitchSafePacketsRemaining = 0;  // Will be set to 100 when map description arrives
-    g_logger.info(">>> Simulating re-login: m_mapKnown=false, waiting for map description");
-    
-    // CRITICAL: Re-enable camera follow for local player
-    // The cleanDynamicThings() disables follow, so we need to restore it
-    if (localPlayer) {
-        g_logger.info(">>> Re-enabling camera follow for local player");
-        g_game.follow(localPlayer);
-    }
-    
-    // Callback Lua (opcional, para UI)
+    // Lua callback for UI updates
     g_lua.callGlobalField("g_game", "onContextSwitch", oldContextId, newContextId);
 }
 
