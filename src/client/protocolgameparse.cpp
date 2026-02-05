@@ -1500,41 +1500,81 @@ void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg)
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 {
-    const auto& thing = getMappedThing(msg);
-    const auto& newPos = getPosition(msg);
-
-    if (!thing || !thing->isCreature()) {
-        // Fallback for local player: check if newPos is adjacent (valid move)
-        // This handles desync after context switch where player isn't found on map
-        if (m_localPlayer) {
-            const auto& playerPos = m_localPlayer->getPosition();
-            const int dx = std::abs(static_cast<int>(newPos.x) - static_cast<int>(playerPos.x));
-            const int dy = std::abs(static_cast<int>(newPos.y) - static_cast<int>(playerPos.y));
-            const int dz = std::abs(static_cast<int>(newPos.z) - static_cast<int>(playerPos.z));
-            
-            // Only use fallback if newPos is adjacent (1 tile) or same floor change
-            if (dx <= 1 && dy <= 1 && dz <= 1) {
+    // Peek at the first bytes to get oldPos for fallback verification
+    Position oldPosFromPacket;
+    bool isPositionBased = false;
+    
+    const uint16_t firstWord = msg->peekU16();
+    if (firstWord != 0xffff) {
+        isPositionBased = true;
+        // Read position manually for fallback check
+        oldPosFromPacket.x = msg->getU16();
+        oldPosFromPacket.y = msg->getU16();
+        oldPosFromPacket.z = msg->getU8();
+        const uint8_t stackpos = msg->getU8();
+        
+        // Try to find creature
+        ThingPtr thing = g_map.getThing(oldPosFromPacket, stackpos);
+        if (!thing) {
+            if (const auto& tile = g_map.getTile(oldPosFromPacket)) {
+                thing = tile->getTopCreature();
+            }
+        }
+        
+        const auto& newPos = getPosition(msg);
+        
+        if (!thing || !thing->isCreature()) {
+            // Fallback ONLY if oldPos exactly matches localPlayer position
+            if (m_localPlayer && m_localPlayer->getPosition() == oldPosFromPacket) {
                 g_map.removeThing(m_localPlayer);
                 m_localPlayer->allowAppearWalk();
                 g_map.addThing(m_localPlayer, newPos, -1);
             }
+            return;
         }
-        return;
-    }
-
-    const auto& creature = thing->static_self_cast<Creature>();
-
-    if (!g_map.removeThing(thing)) {
-        // Force move for local player even if remove fails
-        if (creature == m_localPlayer) {
-            creature->allowAppearWalk();
-            g_map.addThing(thing, newPos, -1);
+        
+        const auto& creature = thing->static_self_cast<Creature>();
+        
+        if (!g_map.removeThing(thing)) {
+            if (creature == m_localPlayer) {
+                creature->allowAppearWalk();
+                g_map.addThing(thing, newPos, -1);
+            }
+            return;
         }
-        return;
+        
+        creature->allowAppearWalk();
+        g_map.addThing(thing, newPos, -1);
+    } else {
+        // Creature ID based lookup (0xFFFF prefix)
+        msg->getU16(); // consume 0xFFFF
+        const uint32_t creatureId = msg->getU32();
+        const auto& newPos = getPosition(msg);
+        
+        auto thing = g_map.getCreatureById(creatureId);
+        if (!thing) {
+            // Fallback for localPlayer by ID
+            if (m_localPlayer && m_localPlayer->getId() == creatureId) {
+                g_map.removeThing(m_localPlayer);
+                m_localPlayer->allowAppearWalk();
+                g_map.addThing(m_localPlayer, newPos, -1);
+            }
+            return;
+        }
+        
+        const auto& creature = thing->static_self_cast<Creature>();
+        
+        if (!g_map.removeThing(thing)) {
+            if (creature == m_localPlayer) {
+                creature->allowAppearWalk();
+                g_map.addThing(thing, newPos, -1);
+            }
+            return;
+        }
+        
+        creature->allowAppearWalk();
+        g_map.addThing(thing, newPos, -1);
     }
-
-    creature->allowAppearWalk();
-    g_map.addThing(thing, newPos, -1);
 }
 
 void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
