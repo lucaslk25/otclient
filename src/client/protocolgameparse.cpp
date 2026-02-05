@@ -3831,6 +3831,12 @@ ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg) const
         if (const auto& thing = g_map.getThing(pos, stackpos)) {
             return thing;
         }
+        
+        // Fallback: Try to find local player at this position (can happen after context switch)
+        if (m_localPlayer && m_localPlayer->getPosition() == pos) {
+            return m_localPlayer;
+        }
+        
         // Silently return null - caller handles missing things
     } else {
         const uint32_t creatureId = msg->getU32();
