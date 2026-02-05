@@ -1504,16 +1504,28 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     const auto& newPos = getPosition(msg);
 
     if (!thing || !thing->isCreature()) {
-        // Creature not found - ignore silently
-        // This happens for NPCs/monsters from different contexts
-        // The client's "forced player position update" handles player desync
+        // Fallback for local player: check if newPos is adjacent (valid move)
+        // This handles desync after context switch where player isn't found on map
+        if (m_localPlayer) {
+            const auto& playerPos = m_localPlayer->getPosition();
+            const int dx = std::abs(static_cast<int>(newPos.x) - static_cast<int>(playerPos.x));
+            const int dy = std::abs(static_cast<int>(newPos.y) - static_cast<int>(playerPos.y));
+            const int dz = std::abs(static_cast<int>(newPos.z) - static_cast<int>(playerPos.z));
+            
+            // Only use fallback if newPos is adjacent (1 tile) or same floor change
+            if (dx <= 1 && dy <= 1 && dz <= 1) {
+                g_map.removeThing(m_localPlayer);
+                m_localPlayer->allowAppearWalk();
+                g_map.addThing(m_localPlayer, newPos, -1);
+            }
+        }
         return;
     }
 
     const auto& creature = thing->static_self_cast<Creature>();
 
     if (!g_map.removeThing(thing)) {
-        // Remove failed but we still need to add to new position for local player
+        // Force move for local player even if remove fails
         if (creature == m_localPlayer) {
             creature->allowAppearWalk();
             g_map.addThing(thing, newPos, -1);
