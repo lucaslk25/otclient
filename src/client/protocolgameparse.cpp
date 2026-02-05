@@ -1500,81 +1500,28 @@ void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg)
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 {
-    // Peek at the first bytes to get oldPos for fallback verification
-    Position oldPosFromPacket;
-    bool isPositionBased = false;
-    
-    const uint16_t firstWord = msg->peekU16();
-    if (firstWord != 0xffff) {
-        isPositionBased = true;
-        // Read position manually for fallback check
-        oldPosFromPacket.x = msg->getU16();
-        oldPosFromPacket.y = msg->getU16();
-        oldPosFromPacket.z = msg->getU8();
-        const uint8_t stackpos = msg->getU8();
-        
-        // Try to find creature
-        ThingPtr thing = g_map.getThing(oldPosFromPacket, stackpos);
-        if (!thing) {
-            if (const auto& tile = g_map.getTile(oldPosFromPacket)) {
-                thing = tile->getTopCreature();
-            }
-        }
-        
-        const auto& newPos = getPosition(msg);
-        
-        if (!thing || !thing->isCreature()) {
-            // Fallback ONLY if oldPos exactly matches localPlayer position
-            if (m_localPlayer && m_localPlayer->getPosition() == oldPosFromPacket) {
-                g_map.removeThing(m_localPlayer);
-                m_localPlayer->allowAppearWalk();
-                g_map.addThing(m_localPlayer, newPos, -1);
-            }
-            return;
-        }
-        
-        const auto& creature = thing->static_self_cast<Creature>();
-        
-        if (!g_map.removeThing(thing)) {
-            if (creature == m_localPlayer) {
-                creature->allowAppearWalk();
-                g_map.addThing(thing, newPos, -1);
-            }
-            return;
-        }
-        
-        creature->allowAppearWalk();
-        g_map.addThing(thing, newPos, -1);
-    } else {
-        // Creature ID based lookup (0xFFFF prefix)
-        msg->getU16(); // consume 0xFFFF
-        const uint32_t creatureId = msg->getU32();
-        const auto& newPos = getPosition(msg);
-        
-        auto thing = g_map.getCreatureById(creatureId);
-        if (!thing) {
-            // Fallback for localPlayer by ID
-            if (m_localPlayer && m_localPlayer->getId() == creatureId) {
-                g_map.removeThing(m_localPlayer);
-                m_localPlayer->allowAppearWalk();
-                g_map.addThing(m_localPlayer, newPos, -1);
-            }
-            return;
-        }
-        
-        const auto& creature = thing->static_self_cast<Creature>();
-        
-        if (!g_map.removeThing(thing)) {
-            if (creature == m_localPlayer) {
-                creature->allowAppearWalk();
-                g_map.addThing(thing, newPos, -1);
-            }
-            return;
-        }
-        
-        creature->allowAppearWalk();
-        g_map.addThing(thing, newPos, -1);
+    const auto& thing = getMappedThing(msg);
+    const auto& newPos = getPosition(msg);
+
+    if (!thing || !thing->isCreature()) {
+        // Creature not found - silently ignore
+        // This can happen for creatures in different contexts
+        return;
     }
+
+    if (!g_map.removeThing(thing)) {
+        // Remove failed - still try to add for local player to prevent desync
+        if (thing == m_localPlayer) {
+            const auto& creature = thing->static_self_cast<Creature>();
+            creature->allowAppearWalk();
+            g_map.addThing(thing, newPos, -1);
+        }
+        return;
+    }
+
+    const auto& creature = thing->static_self_cast<Creature>();
+    creature->allowAppearWalk();
+    g_map.addThing(thing, newPos, -1);
 }
 
 void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
@@ -3881,11 +3828,19 @@ ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg) const
         assert(stackpos != UINT8_MAX);
 
         const Position& pos{ x, y, z };
+        
+        // Try exact stackpos first
         if (const auto& thing = g_map.getThing(pos, stackpos)) {
             return thing;
         }
         
-        // Fallback: Try to find any creature at this position (stackpos mismatch after context switch)
+        // Fallback: If localPlayer is at this position, return it
+        // This handles stackpos mismatch after context switch
+        if (m_localPlayer && m_localPlayer->getPosition() == pos) {
+            return m_localPlayer;
+        }
+        
+        // Try to find any creature at this position
         if (const auto& tile = g_map.getTile(pos)) {
             if (const auto& topCreature = tile->getTopCreature()) {
                 return topCreature;
@@ -3895,6 +3850,11 @@ ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg) const
         const uint32_t creatureId = msg->getU32();
         if (const auto& thing = g_map.getCreatureById(creatureId)) {
             return thing;
+        }
+        
+        // Fallback for localPlayer by ID
+        if (m_localPlayer && m_localPlayer->getId() == creatureId) {
+            return m_localPlayer;
         }
     }
 
