@@ -1504,32 +1504,30 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     const auto& newPos = getPosition(msg);
 
     if (!thing || !thing->isCreature()) {
-        // Fallback for local player: move directly using m_localPlayer
+        // Fallback for local player: check if newPos is adjacent (valid move)
         if (m_localPlayer) {
-            const auto oldPos = m_localPlayer->getPosition();
-            g_logger.info("[CreatureMove] FALLBACK: Moving local player {} -> {}", oldPos.toString(), newPos.toString());
+            const auto& playerPos = m_localPlayer->getPosition();
+            const int dx = std::abs(static_cast<int>(newPos.x) - static_cast<int>(playerPos.x));
+            const int dy = std::abs(static_cast<int>(newPos.y) - static_cast<int>(playerPos.y));
+            const int dz = std::abs(static_cast<int>(newPos.z) - static_cast<int>(playerPos.z));
             
-            // Remove from old position if possible
-            g_map.removeThing(m_localPlayer);
-            
-            // Move to new position
-            m_localPlayer->allowAppearWalk();
-            g_map.addThing(m_localPlayer, newPos, -1);
+            // Only use fallback if newPos is adjacent (1 tile) or same floor change
+            if (dx <= 1 && dy <= 1 && dz <= 1) {
+                g_map.removeThing(m_localPlayer);
+                m_localPlayer->allowAppearWalk();
+                g_map.addThing(m_localPlayer, newPos, -1);
+            }
+            // If not adjacent, ignore - probably movement for another creature
         }
         return;
     }
 
     const auto& creature = thing->static_self_cast<Creature>();
     const auto oldPos = creature->getPosition();
-    
-    if (creature == m_localPlayer) {
-        g_logger.info("[CreatureMove] LOCAL PLAYER {} -> {}", oldPos.toString(), newPos.toString());
-    }
 
     if (!g_map.removeThing(thing)) {
-        // Try to move anyway for local player
+        // Force move for local player even if remove fails
         if (creature == m_localPlayer) {
-            g_logger.warning("[CreatureMove] Remove failed, forcing move {} -> {}", oldPos.toString(), newPos.toString());
             creature->allowAppearWalk();
             g_map.addThing(thing, newPos, -1);
         }
@@ -3848,22 +3846,17 @@ ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg) const
             return thing;
         }
         
-        // Fallback: Try to find any creature at this position
+        // Fallback: Try to find any creature at this position (stackpos mismatch after context switch)
         if (const auto& tile = g_map.getTile(pos)) {
             if (const auto& topCreature = tile->getTopCreature()) {
-                g_logger.info("[getMappedThing] Found creature at {} via fallback", pos.toString());
                 return topCreature;
             }
         }
-        
-        // Log what we're looking for
-        g_logger.debug("[getMappedThing] Not found at {} stackpos {}", pos.toString(), stackpos);
     } else {
         const uint32_t creatureId = msg->getU32();
         if (const auto& thing = g_map.getCreatureById(creatureId)) {
             return thing;
         }
-        g_logger.debug("[getMappedThing] Creature ID {} not found", creatureId);
     }
 
     return nullptr;
