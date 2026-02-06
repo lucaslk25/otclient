@@ -153,9 +153,6 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 case Proto::GameServerCreatureTyping:
                     parseCreatureTyping(msg);
                     break;
-                case Proto::GameServerContextSwitch:
-                    parseContextSwitch(msg);
-                    break;
                 case Proto::GameServerAttachedPaperdoll:
                     parseAttachedPaperdoll(msg);
                     break;
@@ -6290,24 +6287,6 @@ void ProtocolGame::parseCreatureTyping(const InputMessagePtr& msg)
     }
 
     creature->setTyping(typing);
-}
-
-void ProtocolGame::parseContextSwitch(const InputMessagePtr& msg)
-{
-    const uint32_t newContextId = msg->getU32();
-    const uint32_t oldContextId = g_map.getCurrentContext();
-    
-    g_logger.info("[ContextSwitch] {} -> {}", oldContextId, newContextId);
-    
-    // Update context ID
-    g_map.setCurrentContext(newContextId);
-    
-    // CRITICAL: Reset m_mapKnown so the next MapDescription will update player position
-    // Without this, the client keeps the old position and movements fail
-    m_mapKnown = false;
-    
-    // Lua callback for UI updates
-    g_lua.callGlobalField("g_game", "onContextSwitch", oldContextId, newContextId);
 }
 
 void ProtocolGame::parseFeatures(const InputMessagePtr& msg)

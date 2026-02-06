@@ -77,7 +77,6 @@ namespace Proto
         GameServerCreatureShader = 54,
         GameServerMapShader = 55,
         GameServerCreatureTyping = 56,
-        GameServerContextSwitch = 57,  // NOVO: Context Switch (0x39)
         GameServerAttachedPaperdoll = 60,
         GameServerDetachPaperdoll = 61,
         GameServerFeatures = 67,
