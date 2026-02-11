@@ -89,4 +89,3 @@ MiniWindow
       margin-top: 2
       layout:
         type: verticalBox
-        fit-children: true
