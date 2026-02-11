@@ -8,8 +8,8 @@ MiniWindow
   id: instanceWindow
   height: 180
   icon: /images/topbuttons/minimap
-  @onOpen: onOpen()
-  @onClose: onClose()
+  @onOpen: modules.game_instance.onOpen()
+  @onClose: modules.game_instance.onClose()
   &save: true
 
   Label
