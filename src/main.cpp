@@ -26,6 +26,11 @@
 #include "framework/core/resourcemanager.h"
 #include "framework/luaengine/luainterface.h"
 #include "framework/platform/platform.h"
+#ifdef WIN32
+#include <windows.h>
+#include <iostream>
+#include <cstdio>
+#endif
 #ifdef FRAMEWORK_EDITOR
 #include "tools/datdump.h"
 #endif
@@ -73,6 +78,15 @@ void printHelp(const std::string& executableName)
 
     int main(const int argc, const char* argv[])
     {
+#ifdef WIN32
+        // Allocate console for debug output on Windows
+        AllocConsole();
+        FILE* pCout;
+        freopen_s(&pCout, "CONOUT$", "w", stdout);
+        freopen_s(&pCout, "CONOUT$", "w", stderr);
+        std::cout << "=== OTClient Debug Console ===" << std::endl;
+#endif
+
         std::vector<std::string> args(argv, argv + argc);
 
         // process args encoding
