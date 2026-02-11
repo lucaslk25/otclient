@@ -137,3 +137,13 @@ function ProtocolGame:sendExtendedJSONOpcode(opcode, data)
     end
     self:sendExtendedOpcode(opcode, 'E' .. s[#s])
 end
+
+-- ==========================================================================
+-- INSTANCE OPCODE 210 - Inline handler (bypass game_instance module)
+-- DEBUG: This registers the handler here because game_instance module is not
+-- loading. Remove this block once the module issue is resolved.
+-- ==========================================================================
+ProtocolGame.registerExtendedOpcode(210, function(protocol, opcode, buffer)
+    print("[OPCODE 210] Received! len=" .. #buffer)
+    print("[OPCODE 210] buffer=" .. buffer:sub(1, 80))
+end)
