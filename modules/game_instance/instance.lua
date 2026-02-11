@@ -34,7 +34,8 @@ function terminate()
 end
 
 function onGameStart()
-  -- Window is created on demand when server sends data
+  -- DEBUG: visual confirmation that module loaded (remove after testing)
+  displayInfoBox("Instance Module", "game_instance module loaded OK!\nOpcode 210 registered.")
 end
 
 function onGameEnd()
