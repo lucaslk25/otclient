@@ -27,7 +27,7 @@ function terminate()
     onGameEnd = onGameEnd
   })
 
-  ProtocolGame.unregisterExtendedOpcode(INSTANCE_OPCODE)
+  ProtocolGame.unregisterExtendedOpcode(INSTANCE_OPCODE, onExtendedOpcode)
 
   stopTimer()
   destroyWindow()
