@@ -9,12 +9,14 @@ local instanceData = nil
 local timerEvent = nil
 
 function init()
+  print("[game_instance] init() called")
   connect(g_game, {
     onGameStart = onGameStart,
     onGameEnd = onGameEnd
   })
 
   ProtocolGame.registerExtendedOpcode(INSTANCE_OPCODE, onExtendedOpcode)
+  print("[game_instance] opcode 210 registered OK")
 
   if g_game.isOnline() then
     onGameStart()
@@ -22,6 +24,7 @@ function init()
 end
 
 function terminate()
+  print("[game_instance] terminate() called")
   disconnect(g_game, {
     onGameStart = onGameStart,
     onGameEnd = onGameEnd
@@ -34,8 +37,7 @@ function terminate()
 end
 
 function onGameStart()
-  -- DEBUG: visual confirmation that module loaded (remove after testing)
-  displayInfoBox("Instance Module", "game_instance module loaded OK!\nOpcode 210 registered.")
+  print("[game_instance] onGameStart() called")
 end
 
 function onGameEnd()
@@ -49,19 +51,25 @@ end
 -- ============================================================================
 
 function onExtendedOpcode(protocol, code, buffer)
+  print("[game_instance] onExtendedOpcode received! code=" .. tostring(code) .. " len=" .. tostring(#buffer))
+
   local json_status, json_data = pcall(function()
     return json.decode(buffer)
   end)
 
   if not json_status then
+    print("[game_instance] JSON DECODE FAILED: " .. tostring(json_data))
     g_logger.error("Instance UI json error: " .. tostring(json_data))
     return false
   end
 
   local action = json_data["action"]
   if not action then
+    print("[game_instance] no action field in JSON")
     return false
   end
+
+  print("[game_instance] action=" .. tostring(action))
 
   if action == "update" then
     local data = json_data["data"]
@@ -78,6 +86,7 @@ end
 -- ============================================================================
 
 function onInstanceUpdate(data)
+  print("[game_instance] onInstanceUpdate() called")
   instanceData = data
 
   ensureWindow()
@@ -97,11 +106,14 @@ end
 -- ============================================================================
 
 function ensureWindow()
+  print("[game_instance] ensureWindow() called")
   if instanceWindow then
+    print("[game_instance] window already exists, skipping")
     return
   end
 
   instanceWindow = g_ui.loadUI('instance')
+  print("[game_instance] loadUI done, window=" .. tostring(instanceWindow))
   instanceWindow:setup()
 
   instanceButton = modules.game_mainpanel.addToggleButton(
@@ -113,6 +125,7 @@ function ensureWindow()
     8
   )
   instanceButton:setOn(false)
+  print("[game_instance] window + button created OK")
 end
 
 function destroyWindow()
@@ -127,17 +140,23 @@ function destroyWindow()
 end
 
 function showWindow()
+  print("[game_instance] showWindow() called")
   if not instanceWindow then
+    print("[game_instance] showWindow: no window, aborting")
     return
   end
 
   if not instanceWindow:getParent() then
+    print("[game_instance] showWindow: window has no parent, finding panel...")
     local panel = modules.game_interface.findContentPanelAvailable(
       instanceWindow,
       instanceWindow:getMinimumHeight()
     )
     if panel then
       panel:addChild(instanceWindow)
+      print("[game_instance] showWindow: added to panel OK")
+    else
+      print("[game_instance] showWindow: NO PANEL FOUND!")
     end
   end
 
@@ -146,6 +165,7 @@ function showWindow()
     instanceButton:setOn(true)
     instanceButton:show()
   end
+  print("[game_instance] showWindow: done")
 end
 
 function hideWindow()
