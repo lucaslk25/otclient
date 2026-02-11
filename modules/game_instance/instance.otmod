@@ -4,6 +4,10 @@ Module
   author: custom
   website: none
   sandboxed: true
+  autoload: true
+  autoload-priority: 1050
+  dependencies:
+    - game_interface
   scripts: [ instance ]
   @onLoad: init()
   @onUnload: terminate()
