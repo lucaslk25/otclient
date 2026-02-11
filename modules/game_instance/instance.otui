@@ -1,0 +1,92 @@
+PlayerEntry < Label
+  height: 16
+  font: verdana-11px-rounded
+  text-offset: 2 0
+  focusable: false
+
+MiniWindow
+  id: instanceWindow
+  height: 180
+  icon: /images/topbuttons/minimap
+  @onOpen: onOpen()
+  @onClose: onClose()
+  &save: true
+
+  Label
+    id: miniwindowTitle
+    !text: tr('Instance')
+    anchors.top: miniwindowHeader.top
+    anchors.left: miniwindowHeader.left
+    anchors.right: miniwindowHeader.right
+    margin-left: 4
+    margin-top: 2
+
+  MiniWindowContents
+    padding: 6
+
+    Label
+      id: instanceName
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 18
+      font: verdana-11px-rounded
+      text-align: left
+      color: #FFD700
+      !text: tr('--')
+
+    Label
+      id: instanceType
+      anchors.top: instanceName.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 16
+      font: verdana-11px-rounded
+      text-align: left
+      color: #AAAAAA
+      margin-top: 2
+      !text: tr('Type: --')
+
+    Label
+      id: timeRemaining
+      anchors.top: instanceType.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 16
+      font: verdana-11px-rounded
+      text-align: left
+      color: #FF8800
+      margin-top: 2
+      !text: tr('Time left: --:--')
+
+    Panel
+      id: separator
+      anchors.top: timeRemaining.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 1
+      margin-top: 4
+      background-color: #444444
+
+    Label
+      id: playersHeader
+      anchors.top: separator.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 16
+      font: verdana-11px-rounded
+      text-align: left
+      color: #CCCCCC
+      margin-top: 4
+      !text: tr('Players:')
+
+    Panel
+      id: playerList
+      anchors.top: playersHeader.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      margin-top: 2
+      layout:
+        type: verticalBox
+        fit-children: true

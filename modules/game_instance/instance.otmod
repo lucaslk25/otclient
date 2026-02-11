@@ -1,0 +1,9 @@
+Module
+  name: game_instance
+  description: Instance information panel
+  author: custom
+  website: none
+  sandboxed: true
+  scripts: [ instance ]
+  @onLoad: init()
+  @onUnload: terminate()
