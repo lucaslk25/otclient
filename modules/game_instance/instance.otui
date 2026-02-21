@@ -1,37 +1,105 @@
-PlayerEntry < Label
-  height: 16
-  font: verdana-11px-rounded
-  text-offset: 2 0
+PlayerEntry < UIWidget
+  height: 18
+  margin-top: 1
   focusable: false
+  phantom: false
+
+  $hover:
+    background-color: #ffffff22
+
+  $!hover:
+    background-color: #ffffff00
+
+  Label
+    id: vocLabel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    width: 22
+    font: verdana-11px-rounded
+    text-align: center
+    color: #AAAAAA
+    phantom: true
+
+  Label
+    id: nameLabel
+    anchors.top: parent.top
+    anchors.left: vocLabel.right
+    anchors.bottom: parent.bottom
+    anchors.right: levelLabel.left
+    margin-left: 4
+    font: verdana-11px-rounded
+    text-align: left
+    color: #DDDDDD
+    phantom: true
+
+  Label
+    id: levelLabel
+    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    width: 36
+    font: verdana-11px-rounded
+    text-align: right
+    color: #AAAAAA
+    phantom: true
 
 MiniWindow
   id: instanceWindow
-  height: 180
-  icon: /images/topbuttons/minimap
+  height: 200
   @onOpen: modules.game_instance.onOpen()
   @onClose: modules.game_instance.onClose()
   &save: true
 
+  UIWidget
+    id: miniwindowIcon
+    anchors.top: miniwindowHeader.top
+    anchors.left: miniwindowHeader.left
+    margin-top: 2
+    margin-left: 4
+    image-source: /images/topbuttons/instance
+    image-rect: 0 0 12 12
+    image-smooth: false
+
   Label
     id: miniwindowTitle
-    !text: tr('Instance')
     anchors.top: miniwindowHeader.top
     anchors.left: miniwindowHeader.left
     anchors.right: miniwindowHeader.right
-    margin-left: 4
     margin-top: 2
+    margin-left: 20
+    margin-right: 50
+    font: verdana-11px-monochrome
+    height: 13
+    !text: tr('Instance')
+    color: #9d9d9dff
 
   MiniWindowContents
-    padding: 6
+    padding-left: 5
+    padding-right: 5
+    padding-top: 4
+    padding-bottom: 4
+
+    UICreature
+      id: creatureSprite
+      anchors.top: parent.top
+      anchors.horizontalCenter: parent.horizontalCenter
+      size: 0 0
+      padding: 1
+      image-source: /images/ui/panel_flat
+      image-border: 1
+      creature-center: true
+      phantom: false
 
     Label
       id: instanceName
-      anchors.top: parent.top
+      anchors.top: creatureSprite.bottom
       anchors.left: parent.left
       anchors.right: parent.right
       height: 18
+      margin-top: 0
       font: verdana-11px-rounded
-      text-align: left
+      text-align: center
       color: #FFD700
       !text: tr('--')
 
@@ -40,45 +108,54 @@ MiniWindow
       anchors.top: instanceName.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      height: 16
+      height: 14
+      margin-top: 1
       font: verdana-11px-rounded
-      text-align: left
+      text-align: center
       color: #AAAAAA
-      margin-top: 2
-      !text: tr('Type: --')
+      !text: tr('--')
 
-    Label
-      id: timeRemaining
+    UIWidget
+      id: timeBarContainer
       anchors.top: instanceType.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      height: 16
-      font: verdana-11px-rounded
-      text-align: left
-      color: #FF8800
-      margin-top: 2
-      !text: tr('Time left: --:--')
+      height: 14
+      margin-top: 4
 
-    Panel
+      ProgressBar
+        id: timeBar
+        anchors.fill: parent
+        background-color: #44DD44
+        phantom: true
+
+      Label
+        id: timeRemaining
+        anchors.fill: parent
+        font: verdana-11px-rounded
+        text-align: center
+        color: #FFFFFF
+        phantom: true
+        !text: tr('--:--')
+
+    HorizontalSeparator
       id: separator
-      anchors.top: timeRemaining.bottom
+      anchors.top: timeBarContainer.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      height: 1
-      margin-top: 4
-      background-color: #444444
+      margin-top: 6
 
     Label
       id: playersHeader
       anchors.top: separator.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      height: 16
+      height: 14
       font: verdana-11px-rounded
-      text-align: left
-      color: #CCCCCC
-      margin-top: 4
-      !text: tr('Players:')
+      text-align: center
+      color: #888888
+      margin-top: 3
+      !text: tr('Players')
 
     Panel
       id: playerList

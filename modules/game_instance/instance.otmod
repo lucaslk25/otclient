@@ -1,13 +1,9 @@
 Module
   name: game_instance
   description: Instance information panel
-  author: custom
-  website: none
   sandboxed: true
-  autoload: true
-  autoload-priority: 1050
-  dependencies:
-    - game_interface
   scripts: [ instance ]
   @onLoad: init()
   @onUnload: terminate()
+  dependencies:
+    - game_interface

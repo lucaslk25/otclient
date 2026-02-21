@@ -1,0 +1,15 @@
+{
+  "name": "instance-icons",
+  "version": "1.0.0",
+  "description": "Generate instance UI icons (topbutton + panel button) for OTClient game_instance module",
+  "private": true,
+  "scripts": {
+    "generate": "node generate.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "sharp": "^0.33.0"
+  }
+}
