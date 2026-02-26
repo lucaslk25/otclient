@@ -2,7 +2,7 @@ Item < UIItem
   size: 34 34
   padding: 1
   image-source: /images/ui/item
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   border-color: white
   color: white
 
@@ -14,7 +14,7 @@ Item < UIItem
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     phantom: true
-    font: "verdana-11px-rounded"
+    font: "Verdana Bold-11px"
 
   Label
     id: charges
@@ -22,7 +22,7 @@ Item < UIItem
     anchors.left: parent.left
     phantom: true
     text-auto-resize: true
-    font: "verdana-11px-rounded"
+    font: "Verdana Bold-11px"
 
   UIWidget
     id: tier
@@ -204,7 +204,7 @@ MainInventoryItem < UIWidget
     anchors.centerIn: parent
     size: 34 34
     padding: 1
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     border-color: white
     color: white
 	
@@ -219,7 +219,7 @@ MainInventoryItem < UIWidget
       anchors.left: parent.left
       phantom: true
       text-auto-resize: true
-      font: "verdana-11px-rounded"
+      font: "Verdana Bold-11px"
 
     UIWidget
       id: tier

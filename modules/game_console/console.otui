@@ -1,5 +1,5 @@
 ConsoleLabel < UITextEdit
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   height: 14
   color: yellow
   margin-left: 2
@@ -15,7 +15,7 @@ ConsoleLabel < UITextEdit
   focusable: false
 
 ConsolePhantomLabel < UILabel
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   height: 14
   color: yellow
   text-wrap: true
@@ -63,7 +63,7 @@ ConsoleTabBarButton < UIButton
   image-clip: 0 18 96 18
   color: #7f7f7fff
   text-offset: 0 -1
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   anchors.top: parent.top
   anchors.left: parent.left
   padding: 5
@@ -303,7 +303,7 @@ Panel
     image-clip: 0 0 96 18
     icon: /images/game/console/readOnly
     color: #dfdfdfff
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     padding: 5
     tab-spacing: 0
     &tabWidth: 95
@@ -357,7 +357,7 @@ Panel
     margin-right: 3
     size: 64 18
     color: #c0c0c0ff
-    font: cipsoftFont
+    font: Verdana Bold-11px
     !text: tr('Chat Off')
     &isChecked: false
     @onClick: |
@@ -369,3 +369,4 @@ Panel
         self:setText(tr('Chat Off'))
       end
       updateChatMode()
+

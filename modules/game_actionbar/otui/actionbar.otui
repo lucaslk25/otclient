@@ -1,5 +1,5 @@
 ActionButton < UIButton
-  font: cipsoftFont
+  font: Verdana Bold-11px
   size: 34 34
   margin-left: 2
   image-source: /images/game/actionbar/actionbarslot
@@ -40,7 +40,7 @@ ActionButton < UIButton
       text-wrap: true
       text-align: center
       margin: 1
-      font: small-9px
+      font: Verdana Bold-11px
       phantom: true
       Panel
         id: gray
@@ -68,7 +68,7 @@ ActionButton < UIButton
     margin-bottom: 1
     margin-left: 2
     margin-right: 2
-    font: small-9px
+    font: Verdana Bold-11px
     phantom: true
     text-align: left
 
@@ -79,7 +79,7 @@ ActionButton < UIButton
     focusable: false
     phantom: true
     anchors.fill: parent
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     color: white
     border-color: #9fa0a0
   
@@ -229,3 +229,4 @@ Panel
     anchors.verticalCenter: parent.verticalCenter
     margin-right: 1
     margin-top: -1
+

@@ -37,7 +37,7 @@ CharacterWidget < UIWidget
     color: #bbbbbb
     anchors.top: parent.top
     anchors.left: parent.left
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
@@ -97,7 +97,7 @@ CharacterWidget < UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
     margin-left: 350
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
@@ -115,7 +115,7 @@ CharacterWidget < UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
     margin-left: 410
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
@@ -131,7 +131,7 @@ CharacterWidget < UIWidget
     id: worldName
     color: #bbbbbb
     anchors.top: parent.top
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     text-auto-resize: true
     background-color: alpha
     &baseText: '(%s)'
@@ -352,7 +352,7 @@ MainWindow
         self:setWidth(140)
       else
         self:setWidth(75)
-        self:setFont('small-9px')
+        self:setFont('Verdana Bold-11px')
       end
     $!on:
       image-color: red    
@@ -375,3 +375,4 @@ MainWindow
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     @onClick: CharacterList.hide(true)
+

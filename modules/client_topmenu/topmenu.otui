@@ -21,7 +21,7 @@ PingWidget < UIWidget
       text-horizontal-auto-resize: true
       text-auto-resize: true
       focusable: false
-      font: verdana-11px-rounded
+      font: Verdana Bold-11px
     Label
       id: lblfps
       height: 12
@@ -31,7 +31,7 @@ PingWidget < UIWidget
       text-auto-resize: true
       text-align: center
       focusable: false
-      font: verdana-11px-rounded
+      font: Verdana Bold-11px
       
 TopMenuPanel 
   id: topMenu
@@ -185,3 +185,4 @@ TopMenuPanel
     anchors.bottom: parent.bottom
     anchors.right: prev.left
     visible: false
+

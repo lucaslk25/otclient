@@ -1,5 +1,5 @@
 Window < UIWindow
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   size: 200 200
   opacity: 1
   color: #dfdfdf
@@ -156,7 +156,7 @@ ActionAssignWindow < MainWindow
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     size: 45 21
-    font: cipsoftFont
+    font: Verdana Bold-11px
     text: Close
     @onClick: self:getParent():destroy()
 
@@ -166,7 +166,7 @@ ActionAssignWindow < MainWindow
     margin-right: 5
     anchors.bottom: parent.bottom
     size: 45 21
-    font: cipsoftFont
+    font: Verdana Bold-11px
     text: Clear
 
   Button
@@ -175,7 +175,7 @@ ActionAssignWindow < MainWindow
     margin-right: 5
     anchors.bottom: parent.bottom
     size: 45 21
-    font: cipsoftFont
+    font: Verdana Bold-11px
     text: Ok
 
 WindowPanel < Panel
@@ -188,7 +188,7 @@ WindowPanel < Panel
   image-border-top: 17
 
 TransparentWindow < UIWindow
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   size: 200 200
   color: #8f8f8f
   text-offset: 0 2

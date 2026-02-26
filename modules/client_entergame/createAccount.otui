@@ -17,7 +17,7 @@ WorldWidget < UIWidget
     color: #aaaaaa
     anchors.top: parent.top
     anchors.left: parent.left
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
@@ -36,7 +36,7 @@ PanelCreateYourAccount < Panel
   Label
     id: label
     text-offset: 0 2
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
 
   UIWidget
     id: field
@@ -189,7 +189,7 @@ MainWindow
         Label
           text-offset: 0 2
           margin-left: 38
-          font: verdana-11px-monochrome
+          font: Verdana Bold-11px
           !text: tr('Character Name:')
         
         Label
@@ -208,7 +208,7 @@ MainWindow
 
         Button
           text: "Suggest Name"
-          font: cipsoftFont
+          font: Verdana Bold-11px
           @onClick: onClickSuggestName()
       Panel
         id: panelSex
@@ -271,7 +271,7 @@ MainWindow
             image-source: /images/ui/createaccount/icon-no
         Button
           text: "Change World"
-          font: cipsoftFont
+          font: Verdana Bold-11px
           margin-left: -30
           @onClick: toggleMainPanels(true)
     HorizontalSeparator
@@ -287,7 +287,7 @@ MainWindow
       margin-left: 5
       anchors.top: separatorOne.bottom
       anchors.left: parent.left
-      font: cipsoftFont
+      font: Verdana Bold-11px
       @onClick: toggleCreateAccount(true)
     UIButton
       id: buttonStartPlaying
@@ -297,7 +297,7 @@ MainWindow
       margin-right: 5
       anchors.top: separatorOne.bottom
       anchors.right: parent.right
-      font: cipsoftFont
+      font: Verdana Bold-11px
       image-source: /images/ui/createaccount/button_startplaying
       enabled:false
       @onClick: onClickStartPlaying()
@@ -319,7 +319,7 @@ MainWindow
     Label
       text: "This site is protected by ReCAPTCHA and  the google Privacy Policy and Terms of Services apply."
       margin-top: 5
-      font: cipsoftFont
+      font: Verdana Bold-11px
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
@@ -559,7 +559,7 @@ MainWindow
         Label
           text-offset: 0 2
           margin-left: 38
-          font: verdana-11px-monochrome
+          font: Verdana Bold-11px
           !text: tr('World Location:')
         QtComboBox
           id: comboBoxWorld
@@ -716,7 +716,7 @@ MainWindow
       margin-left: 5
       anchors.top: separadorThee.bottom
       anchors.left: parent.left
-      font: cipsoftFont
+      font: Verdana Bold-11px
       @onClick: toggleMainPanels(false)
 
     Button
@@ -726,7 +726,7 @@ MainWindow
       margin-left: 5
       anchors.top: separadorThee.bottom
       anchors.right: parent.right
-      font: cipsoftFont
+      font: Verdana Bold-11px
       @onClick: onClickOkChangeWorld()
 
     Button
@@ -736,5 +736,5 @@ MainWindow
       margin-right: 5
       anchors.top: separadorThee.bottom
       anchors.right: prev.left
-      font: cipsoftFont
+      font: Verdana Bold-11px
       @onClick: onClickResetGameWorld()

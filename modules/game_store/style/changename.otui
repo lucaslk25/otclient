@@ -9,7 +9,7 @@ StoreWindow
     id: transferPointsLabel
     !text: tr('Enter New Character Name')
     text-align: center
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
@@ -57,7 +57,7 @@ StoreWindow
     margin-right: 12
     margin-bottom: 7
     !text: tr('Cancel')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     size: 43 20
     color: #ffffff
 
@@ -68,6 +68,7 @@ StoreWindow
     margin-right: 10
     margin-bottom: 7
     !text: tr('Ok')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     size: 43 20
     color: #ffffff
+

@@ -9,7 +9,7 @@ StoreWindow
     id: transferPointsLabel
     !text: tr('Gift Tibia Coins')
     text-align: center
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
@@ -60,7 +60,7 @@ StoreWindow
     anchors.left: prev.right
     margin-left: 7
     color: #c0c0c0
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     text-auto-resize: true
 
   UIWidget
@@ -74,7 +74,7 @@ StoreWindow
     anchors.left: parent.left
     margin-top: 10
     color: #c0c0c0
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     text: Amount to gift:
     margin-left: 10
   Label
@@ -83,7 +83,7 @@ StoreWindow
     anchors.left: prev.right
     margin-left: 7
     color: #c0c0c0
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     text-auto-resize: true
 
 
@@ -121,7 +121,7 @@ StoreWindow
     margin-right: 12
     margin-bottom: 7
     !text: tr('Cancel')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     size: 43 20
     color: #ffffff
 
@@ -132,6 +132,7 @@ StoreWindow
     margin-right: 10
     margin-bottom: 7
     !text: tr('Gift')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     size: 43 20
     color: #ffffff
+

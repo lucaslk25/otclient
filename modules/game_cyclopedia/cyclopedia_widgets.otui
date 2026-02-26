@@ -143,7 +143,7 @@ CharacterGridItem < UIWidget
     id: amount
     !text: tr('0')
     color: #C0C0C0
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     text-auto-resize: true
     anchors.bottom: parent.bottom
     anchors.right: parent.right
@@ -1073,7 +1073,7 @@ BestiaryItem < UIItem
   Label
     id: Stackable
     text-auto-resize: true
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     color: #BFBFBF
@@ -1303,7 +1303,7 @@ BestiaryTracker < MiniWindow
     margin-top: 2
     margin-left: 20
     margin-right: 50
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     height: 13
     color: #9d9d9dff
 
@@ -1412,7 +1412,7 @@ BlessCreate < UIWidget
   background-color: alpha
   text-offset: 35 1
   focusable: true
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   text-align: left
 
   Label
@@ -1430,3 +1430,4 @@ BlessCreate < UIWidget
     anchors.left: prev.right
     anchors.verticalCenter: parent.verticalCenter
     focusable: false
+

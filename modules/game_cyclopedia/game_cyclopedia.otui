@@ -331,7 +331,7 @@ MainWindow
     anchors.left: prev.right
     margin-left: 5
     !text: tr('Bestiary Tracker')
-    font: small-9px
+    font: Verdana Bold-11px
     @onClick: modules.game_cyclopedia.Cyclopedia.toggleBestiaryTracker()
     text-offset: 0 -1
     color: #C0C0C0

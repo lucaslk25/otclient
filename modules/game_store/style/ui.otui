@@ -50,7 +50,7 @@ OfferPanel2 < Panel
     anchors.left: parent.left
     anchors.right: parent.right
     !text: tr('Buy')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     image-color: #75bfff
 
   StoreFlatPanel
@@ -103,7 +103,7 @@ StoreLightFlatPanel < UIWidget
   image-border: 3
 
 StoreButton < UIButton
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   color: #dfdfdfff
   size: 106 23
   text-offset: 0 0
@@ -127,7 +127,7 @@ StoreButton < UIButton
 
 StoreWindow < UIWindow
   anchors.centerIn: parent
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   size: 200 200
   opacity: 1
   color: #dfdfdf
@@ -148,7 +148,7 @@ StoreWindow < UIWindow
     opacity: 0.8
 
 StoreFlatLabel < UILabel
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   color: #dfdfdf
   size: 86 20
   text-offset: 3 3
@@ -201,7 +201,7 @@ storeCategory < UIWidget
       text-auto-resize: true
       !text: tr('General Stats')
       color: #ffffff
-      font: cipsoftFont
+      font: Verdana Bold-11px
       $checked:
         text-offset: 12 10
       $!checked:
@@ -255,7 +255,7 @@ confirmarSHOP < UIMessageBox
     image-source:  /game_store/images/dragon
   Label
     id: title
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
     text-offset: 0 2
     text-align: top
     anchors.top: parent.top

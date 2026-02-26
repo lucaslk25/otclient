@@ -9,7 +9,7 @@ SmallSkillButton < SkillButton
   height: 14
 
 SkillNameLabel < GameLabel
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   anchors.left: parent.left
   anchors.top: parent.top
   anchors.bottom: parent.bottom
@@ -17,7 +17,7 @@ SkillNameLabel < GameLabel
 
 SkillValueLabel < GameLabel
   id: value
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   text-align: topright
   anchors.right: parent.right
   anchors.top: parent.top
@@ -110,7 +110,7 @@ MiniWindow
     margin-top: 2
     margin-left: 20
     margin-right: 50
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     height: 13
     !text: tr('Skills')
     color: #9d9d9dff
@@ -606,7 +606,7 @@ SkillsSubMenuOption < ThickCheckBox
   text-align: left
   color: white
   background-color: alpha
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   padding: 3 6
 
   $hover:
@@ -619,7 +619,7 @@ SkillsListOption < UIButton
   text-align: left
   color: white
   background-color: alpha
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   padding: 3 6
   margin-left: 5
 

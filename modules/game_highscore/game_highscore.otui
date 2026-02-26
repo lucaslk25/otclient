@@ -3,7 +3,7 @@ WorldType < UIWidget
   text-offset: 35 1
   focusable: true
 
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   text-align: left
 
   CheckBox
@@ -119,7 +119,7 @@ MainWindow
     image-source: /images/ui/window_new
     image-border: 4
     color: #BFBFBF
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
 
     Label
       anchors.top: parent.top
@@ -129,7 +129,7 @@ MainWindow
       text-offset: 0 4
       text-auto-resize: true
       color: #BFBFBF
-      font: verdana-11px-monochrome
+      font: Verdana Bold-11px
     
     ComboBox
       id: gameWorldBox
@@ -147,7 +147,7 @@ MainWindow
       text-offset: 0 4
       text-auto-resize: true
       color: #BFBFBF
-      font: verdana-11px-monochrome
+      font: Verdana Bold-11px
     
     ComboBox
       id: BattlEyeBox
@@ -168,7 +168,7 @@ MainWindow
       text-offset: 0 4
       text-auto-resize: true
       color: #BFBFBF
-      font: verdana-11px-monochrome
+      font: Verdana Bold-11px
     
     ComboBox
       id: vocationBox
@@ -188,7 +188,7 @@ MainWindow
       text-offset: 0 4
       text-auto-resize: true
       color: #BFBFBF
-      font: verdana-11px-monochrome
+      font: Verdana Bold-11px
     
     ComboBox
       id: categoryBox
@@ -207,7 +207,7 @@ MainWindow
       text-offset: 0 4
       text-auto-resize: true
       color: #BFBFBF
-      font: verdana-11px-monochrome
+      font: Verdana Bold-11px
 
     Panel
       id: PanelWorld
@@ -256,7 +256,7 @@ MainWindow
 
     Label
       anchors.fill: parent
-      font: verdana-11px-antialised
+      font: Verdana Bold-11px
       color: #dfdfdf88
       !text: tr('Rank')
       text-offset: 5 3
@@ -268,7 +268,7 @@ MainWindow
 
     Label
       anchors.fill: parent
-      font: verdana-11px-antialised
+      font: Verdana Bold-11px
       color: #dfdfdf88
       !text: tr('Character')
       text-offset: 5 3
@@ -278,7 +278,7 @@ MainWindow
     anchors.left: prev.right
     !text: tr('Vocation')
     size: 116 20
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
     color: #dfdfdf88
 
   PlayersTableHeaderColumn
@@ -286,7 +286,7 @@ MainWindow
     anchors.left: prev.right
     !text: tr('Game World')  
     size: 96 20
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
     color: #dfdfdf88
 
   PlayersTableHeaderColumn
@@ -294,7 +294,7 @@ MainWindow
     anchors.left: prev.right
     !text: tr('Level')  
     size: 66 20
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
     color: #dfdfdf88
 
   PlayersTableHeaderColumn
@@ -308,7 +308,7 @@ MainWindow
       id: value
       anchors.top: parent.top
       anchors.right: parent.right
-      font: verdana-11px-antialised
+      font: Verdana Bold-11px
       color: #dfdfdf88
       !text: tr('Points')  
       margin-right: 6

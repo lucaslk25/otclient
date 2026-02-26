@@ -171,7 +171,7 @@ MiniWindow
     margin-top: 2
     margin-left: 20
     margin-right: 50
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     height: 13
     color: #ffffffe7
     !text: tr('Battle List')
@@ -308,7 +308,7 @@ BattleListMenuOption < ThickCheckBox
   text-align: left
   color: white
   background-color: alpha
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   padding: 3 6
 
   $hover:
@@ -321,7 +321,7 @@ BattleListMenuButton < UIButton
   text-align: left
   color: white
   background-color: alpha
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   padding: 3 6
   margin-left: 5
 

@@ -20,7 +20,7 @@ Panel
     width: 120
     padding: 2
     color: #ffffff
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
 
   UIParticles
     id: particles

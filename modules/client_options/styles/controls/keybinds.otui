@@ -19,14 +19,14 @@ KeybindsTableColumn < Label
   text-align: left
   focusable: false
   text-offset: 2 0
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
 
 EditableKeybindsTableColumn < Label
   color: #c0c0c0
   text-align: left
   focusable: false
   text-offset: 2 0
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   @onCheckChange: self.edit:setVisible(self:isChecked())
 
   Button
@@ -43,7 +43,7 @@ EditableHotkeysTableColumn < Label
   text-align: left
   focusable: false
   text-offset: 18 0
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   @onCheckChange: self.edit:setVisible(self:isChecked())
 
   UIItem
@@ -68,7 +68,7 @@ KeybindsTableHeaderRow < TableHeaderRow
   height: 18
 
 KeybindsTableHeaderColumn < UITableHeaderColumn
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   text-offset: 2 0
   text-align: left
   height: 14
@@ -183,7 +183,7 @@ UIWidget
     
     Label
       text-offset: 0 3
-      font: verdana-11px-monochrome
+      font: Verdana Bold-11px
       !text: tr('Type to search for a hotkey:')
     
     TextEdit
@@ -284,3 +284,4 @@ UIWidget
       margin-top: 8
       !text: tr('Reset')
       @onClick : resetActions()
+

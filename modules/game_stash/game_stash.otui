@@ -57,7 +57,7 @@ StashWindow < MainWindow
       anchors.top: parent.top
       anchors.left: parent.left
       width: 30
-      font: verdana-11px-rounded
+      font: Verdana Bold-11px
       text-offset: 0 2
 
     TextEdit
@@ -147,3 +147,4 @@ StashSelectAmount < MainWindow
     margin-top: 7
     margin-right: 6
     focusable: false
+

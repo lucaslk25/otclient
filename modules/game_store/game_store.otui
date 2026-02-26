@@ -105,7 +105,7 @@ StoreWindow
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     !text: tr('Close')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     @onClick: modules.game_store.toggle()
 
   StoreButton
@@ -115,7 +115,7 @@ StoreWindow
     anchors.right: btnClose.left
     margin-right: 5
     !text: tr('History')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     @onClick: modules.game_store.toggleTransferHistory()
 
   Panel
@@ -190,7 +190,7 @@ StoreWindow
     icon-offset: 10 -1
     text-offset: -10 0
     !text: tr('Get')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     @onClick: modules.game_store.getCoinsWebsite()
 
     $pressed:
@@ -476,3 +476,4 @@ StoreWindow
         anchors.left: HomeProductos.right
         step: 14
         pixels-scroll: true
+

@@ -395,7 +395,7 @@ MarketItemList < UIWidget
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
     margin-left: 2
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     always-show-count: true
     focusable: true
     draggable: false
@@ -478,7 +478,7 @@ MarketMainWindow < Panel
     anchors.left: parent.left
     margin-top: 30
     !text: tr('Level')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     color: #dfdfdfff
     @onClick: modules.game_market.onSortMarketFields(self, self:isChecked())
 
@@ -489,7 +489,7 @@ MarketMainWindow < Panel
     anchors.left: prev.right
     margin-left: 5
     !text: tr('Voc.')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     color: #dfdfdfff
     @onClick: modules.game_market.onSortMarketFields(self, self:isChecked())
 
@@ -500,7 +500,7 @@ MarketMainWindow < Panel
     anchors.left: prev.right
     margin-left: 5
     !text: tr('1H')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     color: #dfdfdfff
     enabled: false
     @onClick: modules.game_market.onSortMarketFields(self, self:isChecked())
@@ -512,7 +512,7 @@ MarketMainWindow < Panel
     anchors.left: prev.right
     margin-left: 5
     !text: tr('2H')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     color: #dfdfdfff
     enabled: false
     @onClick: modules.game_market.onSortMarketFields(self, self:isChecked())
@@ -603,7 +603,7 @@ MarketMainWindow < Panel
     size: 32 32
     virtual: true
     priceable: true
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     anchors.top: prev.top
     anchors.left: parent.left
     margin-top: 1
@@ -811,7 +811,7 @@ MarketMainWindow < Panel
       anchors.top: parent.top
       anchors.right: parent.right
       !text: tr('Accept')
-      font: cipsoftFont
+      font: Verdana Bold-11px
       color: #dfdfdfff
       enabled: false
       @onClick: modules.game_market.onAcceptSellOffer()
@@ -1063,7 +1063,7 @@ MarketMainWindow < Panel
       anchors.right: parent.right
       margin-top: 12
       !text: tr('Accept')
-      font: cipsoftFont
+      font: Verdana Bold-11px
       color: #dfdfdfff
       enabled: false
       @onClick: modules.game_market.onAcceptBuyOffer()
@@ -1454,7 +1454,7 @@ MarketMainWindow < Panel
       anchors.right: parent.right
       enabled: false
       !text: tr('Create')
-      font: cipsoftFont
+      font: Verdana Bold-11px
       color: #dfdfdfff
       @onClick: modules.game_market.createMarketOffer()
 
@@ -1502,7 +1502,7 @@ MarketMainWindow < Panel
       text-auto-resize: true
       color: #c0c0c0
       font: Verdana Bold-11px
-      tooltip-font: Verdana Bold-11px-wheel
+      tooltip-font: Verdana Bold-11px
 
   Panel
     id: coinPanel
@@ -1528,7 +1528,7 @@ MarketMainWindow < Panel
       text-auto-resize: true
       color: #c0c0c0
       font: Verdana Bold-11px
-      tooltip-font: Verdana Bold-11px-wheel
+      tooltip-font: Verdana Bold-11px
 
   Button
     id: getCoins
@@ -1559,7 +1559,7 @@ MarketMainWindow < Panel
     anchors.right: parent.right
     visible: true
     !text: tr('Close')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     color: #dfdfdfff
     size: 75 20
     @onClick: closeMarket()
@@ -1569,7 +1569,7 @@ MarketMainWindow < Panel
     anchors.bottom: parent.bottom
     anchors.right: prev.left
     !text: tr('My Offers')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     color: #dfdfdfff
     size: 75 20
     margin-right: 5
@@ -1580,7 +1580,7 @@ MarketMainWindow < Panel
     anchors.bottom: parent.bottom
     anchors.right: prev.left
     !text: tr('Details')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     color: #dfdfdfff
     size: 75 20
     margin-right: 5
@@ -1591,7 +1591,7 @@ MarketMainWindow < Panel
     anchors.bottom: parent.bottom
     anchors.right: prev.left
     !text: tr('Offers')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     color: #dfdfdfff
     size: 75 20
     margin-right: 5
@@ -2604,7 +2604,7 @@ MarketHistory < Panel
 NewMainWindow
   id: marketWindow
   !text: tr('Market')
-  font: Verdana Bold-11-px-lowspace
+  font: Verdana Bold-11px
   color: #909090
   text-offset: 0 2
   anchors.horizontalCenter: parent.horizontalCenter
@@ -2617,3 +2617,4 @@ NewMainWindow
   MarketHistory
     id: MarketHistory
     visible: false
+

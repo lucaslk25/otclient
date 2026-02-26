@@ -65,7 +65,7 @@ MiniWindow
     margin-top: 2
     margin-left: 20
     margin-right: 50
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     height: 13
     color: #9d9d9dff
 
@@ -85,7 +85,7 @@ MiniWindow
       id: openPvpSituationsLabel
       anchors.top: parent.top
       anchors.left: parent.left
-      font: verdana-11px-monochrome
+      font: Verdana Bold-11px
       margin-top: 5
       margin-left: 5
       phantom: false
@@ -102,7 +102,7 @@ MiniWindow
       id: skullTimeLabel
       anchors.top: prev.bottom
       anchors.left: openPvpSituationsLabel.left
-      font: verdana-11px-monochrome
+      font: Verdana Bold-11px
       phantom: false
       color: #b9b7b7ff
       margin-top: 5
@@ -160,3 +160,4 @@ MiniWindow
       id: monthSkullWidget
       anchors.top: monthProgressBarBackground.top
       margin-top: -5
+

@@ -45,7 +45,7 @@ UIWidget
     anchors.top: CategoryList.bottom
     margin-top: 31
     !text: tr("Level")
-    font: cipsoftFont
+    font: Verdana Bold-11px
     text-align: center
     color: #dfdfdfff
     image-color: #dfdfdf
@@ -67,7 +67,7 @@ UIWidget
     anchors.top: LevelButton.top
     margin-left: 5
     !text: tr("Voc.")
-    font: cipsoftFont
+    font: Verdana Bold-11px
     text-align: center
     color: #dfdfdfff
     image-color: #dfdfdf
@@ -89,7 +89,7 @@ UIWidget
     anchors.top: LevelButton.top
     margin-left: 5
     !text: tr("1H")
-    font: cipsoftFont
+    font: Verdana Bold-11px
     text-align: center
     color: #dfdfdfff
     image-color: #dfdfdf
@@ -112,7 +112,7 @@ UIWidget
     anchors.top: LevelButton.top
     margin-left: 5
     !text: tr("2H")
-    font: cipsoftFont
+    font: Verdana Bold-11px
     text-align: center
     color: #dfdfdfff
     image-color: #dfdfdf
@@ -524,7 +524,7 @@ UIWidget
       size: 12 12
       text-align: left
       text-offset: 18 -2
-      font: pVerdana Bold-11px
+      font: Verdana Bold-11px
       color: #c0c0c0
       image-color: #dfdfdfff
       image-rect: 0 0 12 12
@@ -569,7 +569,7 @@ UIWidget
       text-align: left
       text-offset: 18 -2
       image-color: #dfdfdfff
-      font: pVerdana Bold-11px
+      font: Verdana Bold-11px
       color: #c0c0c0
       image-rect: 0 0 12 12
       image-source: /modules/game_cyclopedia/images/checkbox
@@ -612,7 +612,7 @@ UIWidget
       size: 12 12
       text-align: left
       text-offset: 18 -2
-      font: pVerdana Bold-11px
+      font: Verdana Bold-11px
       color: #c0c0c0
       image-color: #dfdfdfff
       image-rect: 0 0 12 12
@@ -652,7 +652,7 @@ UIWidget
     anchors.left: parent.left
     anchors.bottom: parent.bottom
     !text: tr('Manage Containers')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     text-color: #c0c0c0
     enabled: true
     @onClick: |
@@ -662,3 +662,4 @@ UIWidget
       elseif modules.game_quickloot and modules.game_quickloot.QuickLoot and modules.game_quickloot.QuickLoot.toggle then
         modules.game_quickloot.QuickLoot.toggle()
       end
+

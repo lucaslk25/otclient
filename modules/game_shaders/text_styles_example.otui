@@ -3,7 +3,7 @@
 -- Note: This requires engine support for text-shader property in OTUI parser
 
 PlayerNameLabel < Label
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   color: #ffffff
   text-auto-resize: true
   
@@ -14,19 +14,20 @@ PlayerNameLabel < Label
     color: #00ff00
     
 HighlightedText < Label
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   color: #ffff00
   -- text-shader: Text - Glow
 
 ImportantText < Label
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   color: #ffffff
   -- text-shader: Text - Outline + Shadow
 
 GoldenText < Label
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   color: #ffffff
   -- text-shader: Text - Gold Outline
 
 -- Until OTUI integration is complete, use Lua to apply shaders:
 -- widget:setShader('Text - Black Outline')
+
