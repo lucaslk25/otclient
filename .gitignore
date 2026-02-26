@@ -317,3 +317,8 @@ google-services.json
 # Android libraries
 android/app/libs
 android/app/src/main/assets
+
+#################
+## Node.js
+#################
+node_modules/
