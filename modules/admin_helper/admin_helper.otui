@@ -1,0 +1,494 @@
+PlayerEntryRow < UIWidget
+  height: 18
+  margin-top: 1
+  focusable: false
+  phantom: false
+  background-color: #00000000
+
+  $hover:
+    background-color: #ffffff22
+
+  $selected:
+    background-color: #ffffff28
+
+  Label
+    id: vocLabel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    width: 22
+    font: Verdana Bold-11px
+    text-align: center
+    color: #AAAAAA
+    phantom: true
+
+  Label
+    id: nameLabel
+    anchors.top: parent.top
+    anchors.left: vocLabel.right
+    anchors.bottom: parent.bottom
+    anchors.right: levelLabel.left
+    margin-left: 4
+    font: Verdana Bold-11px
+    text-align: left
+    color: #DDDDDD
+    phantom: true
+
+  Label
+    id: levelLabel
+    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    width: 36
+    font: Verdana Bold-11px
+    text-align: right
+    color: #AAAAAA
+    phantom: true
+
+RaidEntryRow < UIWidget
+  height: 28
+  margin-top: 2
+  focusable: false
+  phantom: false
+  background-color: #00000000
+
+  $hover:
+    background-color: #ffffff22
+
+  UICreature
+    id: bossSprite
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    width: 26
+    creature-center: true
+    phantom: true
+
+  Label
+    id: raidNameLabel
+    anchors.top: parent.top
+    anchors.left: bossSprite.right
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-left: 4
+    font: Verdana Bold-11px
+    text-align: left
+    color: #DDDDDD
+    phantom: true
+
+TeleportEntryRow < UIWidget
+  height: 22
+  margin-top: 1
+  focusable: false
+  phantom: false
+  background-color: #00000000
+
+  $hover:
+    background-color: #ffffff22
+
+  Label
+    id: tpNameLabel
+    anchors.fill: parent
+    margin-left: 4
+    font: Verdana Bold-11px
+    text-align: left
+    color: #DDDDDD
+    phantom: true
+
+MiniWindow
+  id: adminHelperWindow
+  width: 220
+  height: 320
+  @onOpen: modules.admin_helper.onOpen()
+  @onClose: modules.admin_helper.onClose()
+  &save: true
+
+  UIWidget
+    id: miniwindowIcon
+    anchors.top: miniwindowHeader.top
+    anchors.left: miniwindowHeader.left
+    margin-top: 2
+    margin-left: 4
+    image-source: /images/topbuttons/terminal
+    image-rect: 0 0 12 12
+    image-smooth: false
+
+  Label
+    id: miniwindowTitle
+    anchors.top: miniwindowHeader.top
+    anchors.left: miniwindowHeader.left
+    anchors.right: miniwindowHeader.right
+    margin-top: 2
+    margin-left: 20
+    margin-right: 50
+    font: Verdana Bold-11px
+    height: 13
+    !text: tr('Admin Helper')
+    color: #9d9d9dff
+
+  MiniWindowContents
+    padding-left: 5
+    padding-right: 5
+    padding-top: 4
+    padding-bottom: 4
+    layout: verticalBox
+
+    Panel
+      id: navBar
+      height: 22
+      margin-bottom: 4
+      focusable: false
+
+      Label
+        id: screenTitle
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 20
+        font: Verdana Bold-11px
+        text-align: center
+        color: #CCCCCC
+        phantom: true
+        !text: tr('Admin Helper')
+
+      Button
+        id: backButton
+        anchors.top: parent.top
+        anchors.left: parent.left
+        width: 50
+        height: 20
+        visible: false
+        font: Verdana Bold-11px
+        !text: tr('< Back')
+
+    Panel
+      id: screenMain
+      height: 140
+      layout:
+        type: verticalBox
+
+      Button
+        id: btnPlayers
+        height: 28
+        margin-top: 4
+        font: Verdana Bold-11px
+        icon: /images/game/battle/icon-battlelist-players
+        icon-clip: 0 0 12 12
+        icon-offset: 8 0
+        text-offset: 26 0
+        text-align: left
+        !text: tr('Players')
+
+      Button
+        id: btnRaids
+        height: 28
+        margin-top: 4
+        font: Verdana Bold-11px
+        icon: /images/game/battle/icon-battlelist-monster
+        icon-clip: 0 0 12 12
+        icon-offset: 8 0
+        text-offset: 26 0
+        text-align: left
+        !text: tr('Raids')
+
+      Button
+        id: btnTeleports
+        height: 28
+        margin-top: 4
+        font: Verdana Bold-11px
+        icon: /images/topbuttons/minimap
+        icon-clip: 0 0 12 12
+        icon-offset: 8 0
+        text-offset: 26 0
+        text-align: left
+        !text: tr('Teleports')
+
+      Button
+        id: btnInstance
+        height: 28
+        margin-top: 4
+        font: Verdana Bold-11px
+        icon: /images/topbuttons/instance
+        icon-clip: 0 0 12 12
+        icon-offset: 8 0
+        text-offset: 26 0
+        text-align: left
+        !text: tr('Instance')
+
+    Panel
+      id: screenPlayers
+      visible: false
+      height: 250
+      clipping: true
+      layout:
+        type: verticalBox
+
+      Button
+        id: refreshPlayersBtn
+        height: 22
+        font: Verdana Bold-11px
+        !text: tr('Refresh Players')
+
+      Panel
+        id: playerListContainer
+        height: 160
+        margin-top: 4
+        clipping: true
+        layout:
+          type: verticalBox
+
+      Panel
+        id: paginationBar
+        height: 22
+        margin-top: 4
+        phantom: false
+        focusable: false
+        layout:
+          type: horizontalBox
+
+        Button
+          id: prevPageButton
+          width: 50
+          height: 20
+          font: Verdana Bold-11px
+          !text: tr('Prev')
+
+        Label
+          id: pageLabel
+          height: 20
+          font: Verdana Bold-11px
+          text-align: center
+          color: #AAAAAA
+          !text: tr('1 / 1')
+
+        Button
+          id: nextPageButton
+          width: 50
+          height: 20
+          font: Verdana Bold-11px
+          !text: tr('Next')
+
+    Panel
+      id: screenPlayerActions
+      visible: false
+      height: 120
+      clipping: true
+      layout:
+        type: verticalBox
+
+      Label
+        id: selectedPlayerLabel
+        height: 20
+        margin-top: 4
+        font: Verdana Bold-11px
+        text-align: center
+        color: #FFD700
+        !text: tr('--')
+
+      Button
+        id: gotoButton
+        height: 24
+        margin-top: 6
+        font: Verdana Bold-11px
+        !text: tr('Goto (/goto)')
+
+      Button
+        id: pullButton
+        height: 24
+        margin-top: 4
+        font: Verdana Bold-11px
+        !text: tr('Pull (/c)')
+
+    Panel
+      id: screenRaids
+      visible: false
+      height: 200
+      clipping: true
+      layout:
+        type: verticalBox
+
+      Button
+        id: refreshRaidsBtn
+        height: 22
+        font: Verdana Bold-11px
+        !text: tr('Refresh Raids')
+
+      Panel
+        id: raidListContainer
+        height: 160
+        margin-top: 4
+        clipping: true
+        layout:
+          type: verticalBox
+
+    Panel
+      id: screenRaidActions
+      visible: false
+      height: 160
+      clipping: true
+      layout:
+        type: verticalBox
+
+      UICreature
+        id: raidBossSprite
+        height: 36
+        width: 36
+        margin-top: 4
+        creature-center: true
+        phantom: true
+
+      Label
+        id: selectedRaidNameLabel
+        height: 20
+        margin-top: 4
+        font: Verdana Bold-11px
+        text-align: center
+        color: #FF6666
+        !text: tr('--')
+
+      Label
+        id: raidTypeLabel
+        height: 14
+        font: Verdana Bold-11px
+        text-align: center
+        color: #AAAAAA
+        !text: tr('--')
+
+      Button
+        id: startRaidBtn
+        height: 24
+        margin-top: 6
+        font: Verdana Bold-11px
+        !text: tr('Start Raid')
+
+      Button
+        id: tpToRaidBtn
+        height: 24
+        margin-top: 4
+        font: Verdana Bold-11px
+        !text: tr('Teleport to Entry')
+
+    Panel
+      id: screenTeleports
+      visible: false
+      height: 140
+      clipping: true
+      layout:
+        type: verticalBox
+
+      Button
+        id: btnTpTowns
+        height: 28
+        margin-top: 4
+        font: Verdana Bold-11px
+        icon: /images/topbuttons/minimap
+        icon-clip: 0 0 12 12
+        icon-offset: 8 0
+        text-offset: 26 0
+        text-align: left
+        !text: tr('Towns')
+
+      Button
+        id: btnTpRaids
+        height: 28
+        margin-top: 4
+        font: Verdana Bold-11px
+        icon: /images/game/battle/icon-battlelist-monster
+        icon-clip: 0 0 12 12
+        icon-offset: 8 0
+        text-offset: 26 0
+        text-align: left
+        !text: tr('Raid Instances')
+
+      Button
+        id: btnTpBossLevers
+        height: 28
+        margin-top: 4
+        font: Verdana Bold-11px
+        icon: /images/topbuttons/questlog
+        icon-clip: 0 0 12 12
+        icon-offset: 8 0
+        text-offset: 26 0
+        text-align: left
+        !text: tr('Boss Levers')
+
+      Button
+        id: btnTpHunts
+        height: 28
+        margin-top: 4
+        font: Verdana Bold-11px
+        icon: /images/game/battle/icon-battlelist-skull
+        icon-clip: 0 0 12 12
+        icon-offset: 8 0
+        text-offset: 26 0
+        text-align: left
+        !text: tr('Hunts')
+
+    Panel
+      id: screenTpList
+      visible: false
+      height: 220
+      clipping: true
+      layout:
+        type: verticalBox
+
+      Panel
+        id: tpListContainer
+        height: 190
+        clipping: true
+        layout:
+          type: verticalBox
+
+      Panel
+        id: tpPaginationBar
+        height: 22
+        margin-top: 4
+        phantom: false
+        focusable: false
+        layout:
+          type: horizontalBox
+
+        Button
+          id: tpPrevPageBtn
+          width: 50
+          height: 20
+          font: Verdana Bold-11px
+          !text: tr('Prev')
+
+        Label
+          id: tpPageLabel
+          height: 20
+          font: Verdana Bold-11px
+          text-align: center
+          color: #AAAAAA
+          !text: tr('1 / 1')
+
+        Button
+          id: tpNextPageBtn
+          width: 50
+          height: 20
+          font: Verdana Bold-11px
+          !text: tr('Next')
+
+    Panel
+      id: screenInstance
+      visible: false
+      height: 80
+      clipping: true
+      layout:
+        type: verticalBox
+
+      Button
+        id: instanceInfoBtn
+        height: 24
+        margin-top: 4
+        font: Verdana Bold-11px
+        !text: tr('Instance Info')
+
+      Button
+        id: instanceLeaveBtn
+        height: 24
+        margin-top: 4
+        font: Verdana Bold-11px
+        !text: tr('Leave Instance')
+

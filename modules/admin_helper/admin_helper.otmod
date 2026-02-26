@@ -1,0 +1,9 @@
+Module
+  name: admin_helper
+  description: Admin helper panel with chat command buttons and player list
+  sandboxed: true
+  scripts: [ admin_helper ]
+  @onLoad: init()
+  @onUnload: terminate()
+  dependencies:
+    - game_interface
