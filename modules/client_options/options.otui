@@ -37,8 +37,9 @@ OptionsCategory < UIWidget
       text-align: center
       text-auto-resize: true
       !text: tr('General Stats')
-      color: #ffffff
-      font: Verdana Bold-11px
+      color: #c0c0c0ff
+      ttf-font: verdana-bold
+      ttf-font-size: 8
       $checked:
         text-offset: 12 10
       $!checked:

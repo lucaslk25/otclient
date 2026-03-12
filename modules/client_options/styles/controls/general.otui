@@ -40,6 +40,8 @@ UIWidget
       anchors.verticalCenter: prev.verticalCenter
       anchors.left: prev.right
       mouse-scroll: false
+      ttf-font: verdana-bold
+      ttf-font-size: 8
       !tooltip: tr('Regular Controls: Right-click opens menu, use Ctrl+Click for direct item use\nClassic Controls: Right-click for direct use\nLeft Smart-Click: Left-click for direct item use, look at non-walkable objects, or walk to walkable objects. Right-click opens menu')
       
       $mobile:
@@ -52,6 +54,8 @@ UIWidget
       anchors.verticalCenter: prev.verticalCenter
       anchors.left: prev.right
       mouse-scroll: false
+      ttf-font: verdana-bold
+      ttf-font-size: 8
       !tooltip: tr('Choose how to loot items when using Classic Controls\nLoot: Right - Use right-click to quickloot AND open containers/corpses\nLoot: SHIFT+Right - Use SHIFT+right-click for quick looting (right-click maintains normal use/open behavior)\nLoot: Left - Use left-click for quick looting only (right-click maintains normal use/open behavior)')
       visible: false
 
@@ -199,6 +203,8 @@ UIWidget
   QtButton
     id: hotkeysButton
     !text: tr('Hotkeys Manager')
+    ttf-font: verdana-bold
+    ttf-font-size: 8
     @onClick: modules.game_hotkeys.show()
     anchors.top: prev.bottom
     anchors.left: parent.left

@@ -96,24 +96,40 @@ UIWidget
       id: add
       width: 30
       !text: tr("Add")
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick: addNewPreset()
 
     SmallButton
       id: copy
       width: 35
       !text: tr("Copy")
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick: copyPreset()
 
     SmallButton
       id: rename
       width: 45
       !text: tr("Rename")
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick : renamePreset()
 
     SmallButton
       id: remove
       width: 45
       !text: tr("Remove")
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick : removePreset()
   
   SmallReversedQtPanel
@@ -283,5 +299,9 @@ UIWidget
       width: 45
       margin-top: 8
       !text: tr('Reset')
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick : resetActions()
 

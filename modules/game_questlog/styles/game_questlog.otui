@@ -199,7 +199,9 @@ QuestLogTracker < MiniWindow
         text: Add  Tracked  Quest
         margin-left: 20
         margin-right: 20
-        color: white
+        color: #c0c0c0ff
+        ttf-font: verdana-bold
+        ttf-font-size: 8
         @onClick: modules.game_questlog.show()
 
 

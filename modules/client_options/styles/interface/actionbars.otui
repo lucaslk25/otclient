@@ -338,4 +338,7 @@ UIWidget
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin-top: 3
+    ttf-font: verdana-bold
+    ttf-font-size: 8
+    color: #c0c0c0ff
     @onClick: modules.game_actionbar.resetActionBars()

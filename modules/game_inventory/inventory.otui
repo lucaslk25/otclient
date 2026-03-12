@@ -157,7 +157,6 @@ PhantomMiniWindow
       $checked:
         image-clip: 0 20 44 21
 
-
     WhiteHandBox
       id: whiteHandBox
       anchors.right: parent.right
@@ -241,7 +240,8 @@ PhantomMiniWindow
       anchors.left: defense.left
       anchors.right: standPosture.right
       anchors.bottom: parent.bottom
-      font: Verdana Bold-11px
+      ttf-font: verdana-bold
+      ttf-font-size: 8
       color: #c0c0c0ff
       size: 44 13
       @onClick: |
@@ -343,7 +343,8 @@ PhantomMiniWindow
       Label
         !text: tr('Soul')
         text.align: center
-        font: Verdana Bold-11px
+        ttf-font: verdana-bold
+        ttf-font-size: 7
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         color: #c0c0c0ff
@@ -352,7 +353,8 @@ PhantomMiniWindow
       Label
         id: soul
         !text: '100000'
-        font: Verdana Bold-11px
+        ttf-font: verdana-bold
+        ttf-font-size: 9
         text-align: center
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
@@ -369,7 +371,8 @@ PhantomMiniWindow
       Label
         !text: tr('Cap')
         text.align: center
-        font: Verdana Bold-11px
+        ttf-font: verdana-bold
+        ttf-font-size: 7
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         color: #c0c0c0ff
@@ -378,7 +381,8 @@ PhantomMiniWindow
       Label
         id: capacity
         !text: '10000'
-        font: Verdana Bold-11px
+        ttf-font: verdana-bold
+        ttf-font-size: 9
         text-align: center
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
@@ -414,7 +418,8 @@ PhantomMiniWindow
       Label
         !text: tr('Cap')
         text.align: center
-        font: Verdana Bold-11px
+        ttf-font: verdana-bold
+        ttf-font-size: 7
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         color: #c0c0c0ff
@@ -424,7 +429,8 @@ PhantomMiniWindow
       Label
         id: capacity
         !text: '10000'
-        font: Verdana Bold-11px
+        ttf-font: verdana-bold
+        ttf-font-size: 9
         text-align: center
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
@@ -434,7 +440,8 @@ PhantomMiniWindow
       Label
         !text: tr('Soul')
         text.align: center
-        font: Verdana Bold-11px
+        ttf-font: verdana-bold
+        ttf-font-size: 7
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         color: #c0c0c0ff
@@ -444,7 +451,8 @@ PhantomMiniWindow
       Label
         id: soul
         !text: '100000'
-        font: Verdana Bold-11px
+        ttf-font: verdana-bold
+        ttf-font-size: 9
         text-align: center
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
@@ -589,7 +597,8 @@ PhantomMiniWindow
       anchors.right: parent.right
       margin-right: 7
       anchors.bottom: icons.bottom
-      font: Verdana Bold-11px
+      ttf-font: verdana-bold
+      ttf-font-size: 8
       color: #c0c0c0ff
       size: 44 13
       @onClick: |

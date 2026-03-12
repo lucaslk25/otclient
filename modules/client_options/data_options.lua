@@ -291,6 +291,29 @@ return {
             panels.gameMapPanel:setDrawHarmony(value)
         end
     },
+    showSpecialConditionHUD            = {
+        value = false,
+        action = function(value, options, controller, panels, extraWidgets)
+            if modules.game_specialconditionhud then
+                modules.game_specialconditionhud.setVisible(value)
+            end
+        end
+    },
+    conditionHUDBackgroundOpacity     = {
+        value = 87,
+        action = function(value, options, controller, panels, extraWidgets)
+            if modules.game_specialconditionhud then
+                modules.game_specialconditionhud.setBackgroundOpacity(value)
+            end
+            local hudPanel = panels.interfaceHUD
+            if hudPanel then
+                local w = hudPanel:recursiveGetChildById('conditionHUDBackgroundOpacity')
+                if w then
+                    w:setText(tr('Condition HUD background opacity: %s%%', value))
+                end
+            end
+        end
+    },
     displayText                       = {
         value = true,
         action = function(value, options, controller, panels, extraWidgets)

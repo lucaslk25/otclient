@@ -11,7 +11,7 @@ SideActionButton < UIButton
     draggable: true
     &selectable: true
     &editable: false
-    font: verdana-8px-rounded
+    font: Verdana Bold-11px
     always-show-count: true
     $!on:
       image-source: /images/game/actionbar/actionbarslot
@@ -40,7 +40,7 @@ SideActionButton < UIButton
       text-wrap: true
       margin: 1
       text-align: center
-      font:small-9px
+      font: Verdana Bold-11px
       phantom: true
       Panel
         id: gray
@@ -58,7 +58,7 @@ SideActionButton < UIButton
     text-auto-resize: true
     text-wrap: false
     phantom: true
-    font: verdana-8px-rounded
+    font: Verdana Bold-11px
 
   Label
     id: parameterText
