@@ -85,7 +85,7 @@ def generate_otc_bitmap_font(image, drawable, font, font_size, border, antialias
 		fontText = fontText + '-bordered'
 
 	f = open(outputfolder + '/' + fontText + '.otfont', "w")
-	f.write('Font\n  name: ' + fontText + '\n  texture: ' + fontText + '\n  height: ' + str(int(round(glyph_height))) + '\n  glyph-size: ' + str(int(round(glyph_width))) + ' ' + str(int(round(glyph_height))) + '\n  space-width: 4\n')
+	f.write('Font\n  name: ' + fontText + '\n  texture: ' + fontText + '\n  height: ' + str(int(round(glyph_height))) + '\n  glyph-size: ' + str(int(round(glyph_width))) + ' ' + str(int(round(glyph_height))) + '\n  space-width: 4\n  spacing: 0 0\n')
 	f.close()
 	pdb.gimp_file_save(image, image.layers[0], outputfolder + '/' + fontText + '.png', '?')
 
