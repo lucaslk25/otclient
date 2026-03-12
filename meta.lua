@@ -4774,6 +4774,9 @@ function UIWidget:setColor(color) end
 ---@param color Color | string
 function UIWidget:setBackgroundColor(color) end
 
+---@param radius integer
+function UIWidget:setBackgroundRadius(radius) end
+
 ---@param x integer
 function UIWidget:setBackgroundOffsetX(x) end
 
@@ -4953,6 +4956,9 @@ function UIWidget:getColor() end
 
 ---@return Color
 function UIWidget:getBackgroundColor() end
+
+---@return integer
+function UIWidget:getBackgroundRadius() end
 
 ---@return integer
 function UIWidget:getBackgroundOffsetX() end

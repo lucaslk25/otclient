@@ -39,6 +39,6 @@ game
 
 font
   widget: Verdana Bold-11px
-  static-text: Verdana Bold-11px
-  animated-text: Verdana Bold-11px
-  creature-text: Verdana Bold-11px
+  static-text: verdana-11px-rounded
+  animated-text: verdana-11px-rounded
+  creature-text: verdana-11px-rounded
