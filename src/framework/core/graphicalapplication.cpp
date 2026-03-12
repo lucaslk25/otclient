@@ -28,6 +28,7 @@
 #include "garbagecollection.h"
 #include "framework/graphics/drawpoolmanager.h"
 #include "framework/graphics/graphics.h"
+#include "framework/graphics/apngloader.h"
 #include "framework/graphics/image.h"
 #include "framework/graphics/particlemanager.h"
 #include "framework/graphics/texturemanager.h"
@@ -398,6 +399,38 @@ void GraphicalApplication::doScreenshot(std::string file)
 void GraphicalApplication::doMapScreenshot(std::string fileName)
 {
     if (m_drawEvents) m_drawEvents->doMapScreenshot(fileName);
+}
+
+std::string GraphicalApplication::captureScreenshotData()
+{
+    std::string result;
+    
+    // Must capture from main dispatcher thread (where OpenGL context is active)
+    g_mainDispatcher.addEvent([&result] {
+        auto resolution = g_graphics.getViewportSize();
+        const int width = resolution.width();
+        const int height = resolution.height();
+        auto pixels = std::make_shared<std::vector<uint8_t>>(width * height * 4 * sizeof(GLubyte), 0);
+        glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels->data());
+        
+        // Convert to PNG synchronously (we're already in main thread)
+        try {
+            Image image(resolution, 4, pixels->data());
+            image.flipVertically();
+            image.setOpacity(255);
+            
+            std::stringstream pngStream;
+            save_png(pngStream, width, height, 4, image.getPixelData());
+            result = pngStream.str();
+        } catch (stdext::exception& e) {
+            g_logger.error(std::string("Can't capture screenshot data: ") + e.what());
+        }
+    });
+    
+    // Wait for the event to complete (process pending events)
+    g_mainDispatcher.poll();
+    
+    return result;
 }
 
 float GraphicalApplication::getHUDScale() const { return g_window.getDisplayDensity(); }

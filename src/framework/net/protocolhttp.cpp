@@ -275,10 +275,26 @@ void HttpSession::start()
         m_request.append(m_result->postData);
     }
 
-    m_resolver.async_resolve(instance_uri.domain, instance_uri.port, [sft = shared_from_this()](
-        const std::error_code& ec, asio::ip::tcp::resolver::iterator iterator) {
-        sft->on_resolve(ec, std::move(iterator));
-    });
+    // Try to parse as IP address first to avoid DNS lookup
+    std::error_code ec;
+    auto addr = asio::ip::address::from_string(instance_uri.domain, ec);
+    
+    if (!ec) {
+        // It's a valid IP address, connect directly without DNS
+        const unsigned short port = std::stoi(instance_uri.port);
+        asio::ip::tcp::endpoint endpoint(addr, port);
+        
+        m_socket.async_connect(endpoint,
+            [sft = shared_from_this()](const std::error_code& ec) {
+                sft->on_connect(ec);
+            });
+    } else {
+        // It's a hostname, use DNS resolution
+        m_resolver.async_resolve(instance_uri.domain, instance_uri.port, [sft = shared_from_this()](
+            const std::error_code& ec, asio::ip::tcp::resolver::iterator iterator) {
+            sft->on_resolve(ec, std::move(iterator));
+        });
+    }
 }
 
 void HttpSession::on_resolve(const std::error_code& ec, asio::ip::tcp::resolver::iterator iterator)
@@ -587,7 +603,6 @@ void HttpSession::onError(const std::string& ec, const std::string& /*details*/)
 void WebsocketSession::start()
 {
     instance_uri = parseURI(m_url);
-    const asio::ip::tcp::resolver::query query_resolver(instance_uri.domain, instance_uri.port);
 
     m_request.append("GET " + instance_uri.query + " HTTP/1.1\r\n");
     m_request.append("Host: " + instance_uri.domain + ":" + instance_uri.port + "\r\n");
@@ -597,12 +612,36 @@ void WebsocketSession::start()
     m_request.append("Sec-WebSocket-Version: 13\r\n");
     m_request.append("\r\n");
 
-    m_resolver.async_resolve(
-        query_resolver,
-        [sft = shared_from_this()](
-        const std::error_code& ec, asio::ip::tcp::resolver::iterator iterator) {
-        sft->on_resolve(ec, std::move(iterator));
-    });
+    // Try to parse as IP address first to avoid DNS lookup
+    std::error_code ec;
+    auto addr = asio::ip::address::from_string(instance_uri.domain, ec);
+    
+    if (!ec) {
+        // It's a valid IP address, connect directly without DNS
+        const unsigned short port = std::stoi(instance_uri.port);
+        asio::ip::tcp::endpoint endpoint(addr, port);
+        
+        if (instance_uri.port == "443") {
+            m_ssl.lowest_layer().async_connect(endpoint,
+                [sft = shared_from_this()](const std::error_code& ec) {
+                    sft->on_connect(ec);
+                });
+        } else {
+            m_socket.async_connect(endpoint,
+                [sft = shared_from_this()](const std::error_code& ec) {
+                    sft->on_connect(ec);
+                });
+        }
+    } else {
+        // It's a hostname, use DNS resolution
+        const asio::ip::tcp::resolver::query query_resolver(instance_uri.domain, instance_uri.port);
+        m_resolver.async_resolve(
+            query_resolver,
+            [sft = shared_from_this()](
+            const std::error_code& ec, asio::ip::tcp::resolver::iterator iterator) {
+            sft->on_resolve(ec, std::move(iterator));
+        });
+    }
 }
 
 void WebsocketSession::on_resolve(const std::error_code& ec, asio::ip::tcp::resolver::iterator iterator)
