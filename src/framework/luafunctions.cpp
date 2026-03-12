@@ -380,6 +380,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_app", "setStaticTextScale", &GraphicalApplication::setStaticTextScale, &g_app);
     g_lua.bindSingletonFunction("g_app", "doScreenshot", &GraphicalApplication::doScreenshot, &g_app);
     g_lua.bindSingletonFunction("g_app", "doMapScreenshot", &GraphicalApplication::doMapScreenshot, &g_app);
+    g_lua.bindSingletonFunction("g_app", "captureScreenshotData", &GraphicalApplication::captureScreenshotData, &g_app);
 
     // PlatformWindow
     g_lua.registerSingletonClass("g_window");
@@ -669,6 +670,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setPosition", &UIWidget::setPosition);
     g_lua.bindClassMemberFunction<UIWidget>("setColor", &UIWidget::setColor);
     g_lua.bindClassMemberFunction<UIWidget>("setBackgroundColor", &UIWidget::setBackgroundColor);
+    g_lua.bindClassMemberFunction<UIWidget>("setBackgroundRadius", &UIWidget::setBackgroundRadius);
     g_lua.bindClassMemberFunction<UIWidget>("setBackgroundOffsetX", &UIWidget::setBackgroundOffsetX);
     g_lua.bindClassMemberFunction<UIWidget>("setBackgroundOffsetY", &UIWidget::setBackgroundOffsetY);
     g_lua.bindClassMemberFunction<UIWidget>("setBackgroundOffset", &UIWidget::setBackgroundOffset);
@@ -735,6 +737,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getMaxSize", &UIWidget::getMaxSize);
     g_lua.bindClassMemberFunction<UIWidget>("getColor", &UIWidget::getColor);
     g_lua.bindClassMemberFunction<UIWidget>("getBackgroundColor", &UIWidget::getBackgroundColor);
+    g_lua.bindClassMemberFunction<UIWidget>("getBackgroundRadius", &UIWidget::getBackgroundRadius);
     g_lua.bindClassMemberFunction<UIWidget>("getBackgroundOffsetX", &UIWidget::getBackgroundOffsetX);
     g_lua.bindClassMemberFunction<UIWidget>("getBackgroundOffsetY", &UIWidget::getBackgroundOffsetY);
     g_lua.bindClassMemberFunction<UIWidget>("getBackgroundOffset", &UIWidget::getBackgroundOffset);
