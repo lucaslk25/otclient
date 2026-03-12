@@ -1,0 +1,16 @@
+Module
+  name: mcp_bridge
+  description: MCP Bridge for AI-assisted development
+  author: Lucas
+  version: 0.1
+  autoload: true
+  autoload-priority: 1000
+  dependencies:
+    - corelib
+
+  @onLoad: |
+    dofile('mcp_bridge')
+    MCPBridge.init()
+
+  @onUnload: |
+    MCPBridge.terminate()

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "otclient": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\lucas\\OneDrive\\Documentos\\GitHub\\otclient\\tools\\mcp-server\\dist\\index.js"
+      ]
+    }
+  }
+}

@@ -1,0 +1,4 @@
+# Optional dependencies for OTClient tools (e.g. bitmap font generator)
+# Install with: pip install -r requirements-tools.txt
+
+Pillow>=9.0.0

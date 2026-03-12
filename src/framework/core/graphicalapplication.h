@@ -133,6 +133,7 @@ public:
     void setDrawEvents(const ApplicationDrawEventsPtr& drawEvents) { m_drawEvents = drawEvents; }
     void doScreenshot(std::string file);
     void doMapScreenshot(std::string file);
+    std::string captureScreenshotData();
 #ifdef __EMSCRIPTEN__
     void mainLoop();
 #endif
