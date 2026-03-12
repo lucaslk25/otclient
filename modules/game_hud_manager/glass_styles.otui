@@ -1,0 +1,245 @@
+GlassPanel < UIWidget
+  background-color: #0e0e22aa
+  background-radius: 8
+  border-width-top: 1
+  border-color-top: #ffffff18
+  border-width-left: 1
+  border-color-left: #ffffff10
+  border-width-bottom: 1
+  border-color-bottom: #00000040
+  border-width-right: 1
+  border-color-right: #00000030
+  phantom: false
+
+GlassPanelDark < GlassPanel
+  background-color: #08081acc
+
+GlassPanelLight < GlassPanel
+  background-color: #1a1a35bb
+
+GlassWindow < UIWindow
+  font: Verdana Bold-11px
+  size: 200 200
+  color: alpha
+  text-offset: 0 0
+  text-align: top
+  opacity: 1.0
+  background-color: #08081acc
+  background-radius: 12
+  border-width-top: 1
+  border-color-top: #ffffff20
+  border-width-left: 1
+  border-color-left: #ffffff15
+  border-width-bottom: 1
+  border-color-bottom: #00000050
+  border-width-right: 1
+  border-color-right: #00000040
+  padding: 0
+  
+  $dragging:
+    opacity: 0.7
+
+GlassListRow < UIButton
+  height: 28
+  text-align: left
+  text-offset: 24 0
+  color: #a0a0b8ff
+  font: Verdana Bold-11px
+  background-color: #0e0e2200
+  background-radius: 6
+  border-width: 0
+  padding: 4
+  
+  $hover !on:
+    background-color: #1a1a3566
+    color: #e8e8f0ff
+  
+  $on:
+    background-color: #2040a0cc
+    color: #e8e8f0ff
+    border-width-top: 1
+    border-color-top: #ffffff25
+    border-width-left: 1
+    border-color-left: #ffffff18
+
+  UIWidget
+    id: statusIndicator
+    size: 8 8
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 8
+    background-color: #606080ff
+    background-radius: 4
+    phantom: true
+
+    $parent on:
+      background-color: #60c060ff
+
+GlassCheckBox < UICheckBox
+  size: 14 14
+  text-align: left
+  text-offset: 20 1
+  color: #a0a0b8ff
+  font: Verdana Bold-11px
+  image-color: #a0a0b8ff
+  image-rect: 0 0 14 14
+  image-source: /images/ui/newcheckbox
+  background-color: alpha
+  
+  $hover !disabled:
+    color: #e8e8f0ff
+    image-color: #e8e8f0ff
+
+  $!checked:
+    image-clip: 0 0 14 14
+
+  $checked !disabled:
+    image-clip: 0 13 14 14
+    color: #c8c8e0ff
+    image-color: #c8c8e0ff
+
+  $checked disabled:
+    image-clip: 0 26 14 14
+
+  $disabled:
+    color: #60607088
+    image-color: #60607088
+
+GlassSectionTitle < Label
+  height: 24
+  text-align: left
+  text-offset: 0 0
+  color: #c8c8e0ff
+  font: Verdana Bold-11px
+  background-color: alpha
+  
+  UIWidget
+    id: accentLine
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    height: 1
+    background-color: #ffffff15
+    margin-bottom: 2
+    phantom: true
+
+GlassButton < UIButton
+  font: Verdana Bold-11px
+  size: 80 26
+  text-offset: 0 0
+  color: #e8e8f0ff
+  background-color: #1a1a35cc
+  background-radius: 6
+  border-width-top: 1
+  border-color-top: #ffffff20
+  border-width-left: 1
+  border-color-left: #ffffff15
+  border-width-bottom: 1
+  border-color-bottom: #00000040
+  border-width-right: 1
+  border-color-right: #00000030
+  opacity: 1.0
+  
+  $hover !disabled:
+    background-color: #2040a0dd
+    border-color-top: #ffffff30
+    border-color-left: #ffffff20
+    color: #ffffff
+
+  $pressed:
+    background-color: #1a3080cc
+    text-offset: 0 1
+    border-color-top: #00000040
+    border-color-left: #00000030
+    border-color-bottom: #ffffff20
+    border-color-right: #ffffff15
+
+  $disabled:
+    color: #60607088
+    opacity: 0.5
+    background-color: #0e0e2266
+
+GlassButtonSmall < UIButton
+  font: Verdana Bold-11px
+  size: 24 24
+  text-offset: 0 0
+  color: #e8e8f0ff
+  background-color: #1a1a35cc
+  background-radius: 6
+  border-width-top: 1
+  border-color-top: #ffffff20
+  border-width-left: 1
+  border-color-left: #ffffff15
+  border-width-bottom: 1
+  border-color-bottom: #00000040
+  border-width-right: 1
+  border-color-right: #00000030
+  opacity: 1.0
+  
+  $hover !disabled:
+    background-color: #c04040dd
+    border-color-top: #ffffff30
+    border-color-left: #ffffff20
+    color: #ffffff
+
+  $pressed:
+    background-color: #a03030cc
+    text-offset: 0 0
+    border-color-top: #00000040
+    border-color-left: #00000030
+    border-color-bottom: #ffffff20
+    border-color-right: #ffffff15
+
+  $disabled:
+    color: #60607088
+    opacity: 0.5
+    background-color: #0e0e2266
+
+GlassToggle < UIButton
+  size: 32 16
+  background-color: #404060cc
+  background-radius: 8
+
+  UIWidget
+    id: knob
+    size: 10 10
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: parent.left
+    margin-left: 3
+    background-color: #808090ff
+    background-radius: 5
+    phantom: true
+
+GlassConditionCell < UIButton
+  size: 42 42
+  background-color: alpha
+  background-radius: 6
+  image-rect: 7 7 28 28
+  image-color: #ffffff44
+
+  $hover !on:
+    background-color: #ffffff15
+    image-color: #ffffff88
+
+  $on:
+    background-color: #1a3a1a88
+    image-color: #ffffffff
+
+  $on $hover:
+    background-color: #22501888
+    image-color: #ffffffff
+
+GlassSeparator < UIWidget
+  height: 1
+  background-color: #ffffff10
+  phantom: true
+
+GlassSeparatorThick < UIWidget
+  height: 2
+  background-color: #ffffff15
+  phantom: true
+  
+  UIWidget
+    anchors.fill: parent
+    margin-top: 1
+    background-color: #00000030
