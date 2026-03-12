@@ -50,6 +50,7 @@ public:
     void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color& color = Color::white) const;
     void addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color& color = Color::white) const;
     void addFilledRect(const Rect& dest, const Color& color = Color::white) const;
+    void addFilledRoundedRect(const Rect& dest, const Color& color, const int radius) const;
     void addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color& color = Color::white) const;
     void addBoundingRect(const Rect& dest, const Color& color = Color::white, uint16_t innerLineWidth = 1) const;
     void addAction(const std::function<void()>& action, size_t hash = 0) const { getCurrentPool()->addAction(action, hash); }

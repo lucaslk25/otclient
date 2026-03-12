@@ -313,6 +313,8 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             setBackgroundColor(node->value<Color>());
         else if (node->tag() == "background-color")
             setBackgroundColor(node->value<Color>());
+        else if (node->tag() == "background-radius")
+            setBackgroundRadius(node->value<int>());
         else if (node->tag() == "background-offset-x")
             setBackgroundOffsetX(node->value<int>());
         else if (node->tag() == "background-offset-y")
@@ -755,7 +757,10 @@ void UIWidget::drawBackground(const Rect& screenCoords) const
             drawRect.resize(m_backgroundRect.size());
 
         g_drawPool.setDrawOrder(m_backgroundDrawOrder);
-        g_drawPool.addFilledRect(drawRect, m_backgroundColor);
+        if (m_backgroundRadius > 0)
+            g_drawPool.addFilledRoundedRect(drawRect, m_backgroundColor, m_backgroundRadius);
+        else
+            g_drawPool.addFilledRect(drawRect, m_backgroundColor);
         g_drawPool.resetDrawOrder();
     }
 }
