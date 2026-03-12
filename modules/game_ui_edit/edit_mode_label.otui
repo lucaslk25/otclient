@@ -1,0 +1,17 @@
+EditModeLabel < UIWidget
+  height: 16
+  image-source: /images/ui/edit_mode_dashed_border
+  image-border: 2
+  image-color: #000000ff
+  background-color: #000000aa
+  font: verdana-11px-rounded
+  color: #ffffffff
+  text-align: center
+  text-auto-resize: true
+  padding-left: 4
+  padding-right: 4
+  padding-top: 1
+  padding-bottom: 1
+  phantom: true
+  focusable: false
+  opacity: 0.95
