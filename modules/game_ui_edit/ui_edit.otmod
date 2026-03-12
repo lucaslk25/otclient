@@ -1,0 +1,9 @@
+Module
+  name: game_ui_edit
+  description: Global UI edit mode manager and lock/unlock button for HUDs
+  author: OTClient
+  website: https://github.com/edubart/otclient
+  sandboxed: true
+  scripts: [ ui_edit ]
+  @onLoad: init()
+  @onUnload: terminate()

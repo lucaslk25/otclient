@@ -1,5 +1,5 @@
 ChannelListLabel < Label
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   background-color: alpha
   text-offset: 2 0
   focusable: true
@@ -63,3 +63,4 @@ MainWindow
     anchors.right: channelList.right
     step: 14
     pixels-scroll: true
+

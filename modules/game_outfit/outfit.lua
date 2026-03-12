@@ -732,7 +732,7 @@ function savePreset()
     end
 
     --[[     if lastSelectTitle ~= "None" then
-        window.presetsList[presetId].creature:getCreature():setTitle(lastSelectTitle, "verdana-11px-rounded", "#0000ff")
+        window.presetsList[presetId].creature:getCreature():setTitle(lastSelectTitle, "Verdana Bold-11px", "#0000ff")
     end ]]
     -- @
 end
@@ -1177,7 +1177,7 @@ function showTitle()
             button:setId(tostring(titleData))
 
             button.outfit:setOutfit(previewCreature:getCreature():getOutfit())
-            button.outfit:getCreature():getCreature():setTitle(titleData, "verdana-11px-rounded", "#0000ff")
+            button.outfit:getCreature():getCreature():setTitle(titleData, "Verdana Bold-11px", "#0000ff")
 
             button.name:setText(tostring(titleData))
             if tempOutfit.tile == titleData then
@@ -1483,7 +1483,7 @@ function onTitleSelect(list, focusedChild, unfocusedChild, reason)
         local titleType = tostring(focusedChild:getId())
 
         if titleType ~= "None" then
-            previewCreature:getCreature():setTitle(titleType, "verdana-11px-rounded", "#0000ff")
+            previewCreature:getCreature():setTitle(titleType, "Verdana Bold-11px", "#0000ff")
             lastSelectTitle = titleType
         else
             lastSelectTitle = "None"

@@ -19,14 +19,14 @@ KeybindsTableColumn < Label
   text-align: left
   focusable: false
   text-offset: 2 0
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
 
 EditableKeybindsTableColumn < Label
   color: #c0c0c0
   text-align: left
   focusable: false
   text-offset: 2 0
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   @onCheckChange: self.edit:setVisible(self:isChecked())
 
   Button
@@ -43,7 +43,7 @@ EditableHotkeysTableColumn < Label
   text-align: left
   focusable: false
   text-offset: 18 0
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   @onCheckChange: self.edit:setVisible(self:isChecked())
 
   UIItem
@@ -68,7 +68,7 @@ KeybindsTableHeaderRow < TableHeaderRow
   height: 18
 
 KeybindsTableHeaderColumn < UITableHeaderColumn
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   text-offset: 2 0
   text-align: left
   height: 14
@@ -96,24 +96,40 @@ UIWidget
       id: add
       width: 30
       !text: tr("Add")
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick: addNewPreset()
 
     SmallButton
       id: copy
       width: 35
       !text: tr("Copy")
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick: copyPreset()
 
     SmallButton
       id: rename
       width: 45
       !text: tr("Rename")
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick : renamePreset()
 
     SmallButton
       id: remove
       width: 45
       !text: tr("Remove")
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick : removePreset()
   
   SmallReversedQtPanel
@@ -183,7 +199,7 @@ UIWidget
     
     Label
       text-offset: 0 3
-      font: verdana-11px-monochrome
+      font: Verdana Bold-11px
       !text: tr('Type to search for a hotkey:')
     
     TextEdit
@@ -283,4 +299,9 @@ UIWidget
       width: 45
       margin-top: 8
       !text: tr('Reset')
+      ttf-font: verdana-bold
+      ttf-font-size: 8
+      color: #c0c0c0ff
+      text-offset: 0 0
       @onClick : resetActions()
+

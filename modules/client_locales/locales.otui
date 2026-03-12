@@ -1,12 +1,12 @@
 LocalesMainLabel < Label
-  font: sans-bold-16px
+  font: Verdana Bold-11px
 
 LocalesButton < UIWidget
   size: 96 96
   image-size: 96 96
   image-smooth: true
   text-offset: 0 96
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
 
 UIWindow
   id: localesWindow
@@ -33,3 +33,4 @@ UIWindow
       cell-size: 96 128
       cell-spacing: 32
       flow: true
+

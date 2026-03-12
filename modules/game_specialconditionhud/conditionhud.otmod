@@ -1,0 +1,9 @@
+Module
+  name: game_specialconditionhud
+  description: Floating HUD panel showing active player conditions (poison, burn, hungry, etc.)
+  author: OTClient
+  website: https://github.com/edubart/otclient
+  sandboxed: true
+  scripts: [ conditionhud ]
+  @onLoad: init()
+  @onUnload: terminate()

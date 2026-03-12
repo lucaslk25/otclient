@@ -89,7 +89,7 @@ EnterGameWindow
   UIButton
     !text: tr('Forgot password and/or email')
     id: Forgot_password_email
-    font: verdana-11px-monochrome-underline
+    font: Verdana Bold-11px
     text-align: left
     anchors.left: rememberEmailBox.left
     anchors.right: parent.right
@@ -241,9 +241,10 @@ EnterGameWindow
 
   Label
     id: serverInfoLabel
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     anchors.top: prev.top
     anchors.left: parent.left
     margin-top: 5
     color: green
     text-auto-resize: true
+

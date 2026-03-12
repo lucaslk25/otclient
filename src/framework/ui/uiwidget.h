@@ -736,6 +736,7 @@ protected:
 
     Color m_color{ Color::white };
     Color m_backgroundColor{ Color::alpha };
+    int m_backgroundRadius{ 0 };
     Rect m_backgroundRect;
     TexturePtr m_icon;
     Color m_iconColor{ Color::white };
@@ -779,6 +780,7 @@ public:
     void setPosition(const Point& pos) { move(pos.x, pos.y); }
     void setColor(const Color& color);
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; repaint(); }
+    void setBackgroundRadius(const int radius) { m_backgroundRadius = std::max(0, radius); repaint(); }
     void setBackgroundOffsetX(const int x) { m_backgroundRect.setX(x); repaint(); }
     void setBackgroundOffsetY(const int y) { m_backgroundRect.setX(y); repaint(); }
     void setBackgroundOffset(const Point& pos) { m_backgroundRect.move(pos); repaint(); }
@@ -842,6 +844,7 @@ public:
     Rect getRect() { return m_rect; }
     Color getColor() { return m_color; }
     Color getBackgroundColor() { return m_backgroundColor; }
+    int getBackgroundRadius() { return m_backgroundRadius; }
     int getBackgroundOffsetX() { return m_backgroundRect.x(); }
     int getBackgroundOffsetY() { return m_backgroundRect.y(); }
     Point getBackgroundOffset() { return m_backgroundRect.topLeft(); }

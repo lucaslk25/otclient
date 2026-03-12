@@ -88,6 +88,10 @@ public:
 
     void addBoudingRect(const Rect& dest, int innerLineWidth);
     void addRepeatedRects(const Rect& dest, const Rect& src);
+    void addFilledRoundedRect(const Rect& dest, const int radius)
+    {
+        m_vertexArray.addFilledRoundedRect(dest, radius);
+    }
 
     void append(const CoordsBuffer* buffer)
     {

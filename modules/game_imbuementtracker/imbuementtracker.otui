@@ -3,7 +3,7 @@ ImbuementTrackerMenuOption < ThickCheckBox
   text-align: left
   color: white
   background-color: alpha
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   padding: 3 6
 
   $hover:
@@ -44,7 +44,7 @@ ImbuementSlot < Panel
     anchors.top: parent.top
     anchors.right: parent.right
     anchors.left: parent.left
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     color: #ffff00
     margin-top: 3
 
@@ -99,7 +99,7 @@ ImbuementTracker < MiniWindow
     margin-top: 2
     margin-left: 20
     margin-right: 50
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     height: 13
     !text: tr('Imbuements')
     color: #9d9d9dff
@@ -118,3 +118,4 @@ ImbuementTracker < MiniWindow
     padding-right: 5
     padding-bottom: 3
     layout: verticalBox
+

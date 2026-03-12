@@ -811,7 +811,7 @@ function addText(text, speaktype, tabName, creatureName)
     end
 end
 
--- Contains letter width for font "verdana-11px-antialised" as console is based on it
+-- Contains letter width for font "Verdana Bold-11px" as console is based on it
 local letterWidth = { -- New line (10) and Space (32) have width 1 because they are printed and not replaced with spacer
     [10] = 1,
     [32] = 1,

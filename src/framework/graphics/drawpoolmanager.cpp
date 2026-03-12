@@ -164,6 +164,20 @@ void DrawPoolManager::addFilledRect(const Rect& dest, const Color& color) const
     getCurrentPool()->add(color, nullptr, DrawPool::DrawMethod{ .type = DrawPool::DrawMethodType::RECT, .dest = dest });
 }
 
+void DrawPoolManager::addFilledRoundedRect(const Rect& dest, const Color& color, const int radius) const
+{
+    if (dest.isEmpty() || radius < 0) {
+        getCurrentPool()->resetOnlyOnceParameters();
+        return;
+    }
+
+    getCurrentPool()->add(color, nullptr, DrawPool::DrawMethod{
+        .type = DrawPool::DrawMethodType::ROUNDED_RECT,
+        .dest = dest,
+        .intValue = static_cast<uint16_t>(radius)
+    });
+}
+
 void DrawPoolManager::addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color& color) const
 {
     if (a == b || a == c || b == c) {

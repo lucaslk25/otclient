@@ -333,7 +333,7 @@ OutfitWindow < MainWindow
           anchors.top: parent.top
           anchors.left: parent.left
           anchors.right: parent.right
-          font: verdana-11px-rounded
+          font: Verdana Bold-11px
           color: #00BC00
           text-align: center
         
@@ -814,25 +814,25 @@ OutfitWindow < MainWindow
     Button
       text: New
       width: 43
-      font: cipsoftFont
+      font: Verdana Bold-11px
       @onClick: modules.game_outfit.newPreset()
 
     Button
       text: Rename
       width: 43
-      font: cipsoftFont
+      font: Verdana Bold-11px
       @onClick: modules.game_outfit.renamePreset()
 
     Button
       text: Save
       width: 43
-      font: cipsoftFont
+      font: Verdana Bold-11px
       @onClick: modules.game_outfit.savePreset()
 
     Button
       text: Delete
       width: 43
-      font: cipsoftFont
+      font: Verdana Bold-11px
       @onClick: modules.game_outfit.deletePreset()
 
   MiniPanel

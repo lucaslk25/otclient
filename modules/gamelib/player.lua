@@ -59,11 +59,11 @@ Icons[PlayerStates.IntenseHex] = { clip = 18, tooltip = tr('You are IntenseHex')
 Icons[PlayerStates.GreaterHex] = { clip = 19, tooltip = tr('You are GreaterHex'),  id = 'condition_GreaterHex' }
 Icons[PlayerStates.Rooted] = { clip = 20, tooltip = tr('You are Rooted'),  id = 'condition_Rooted' }
 Icons[PlayerStates.Feared] = { clip = 21, tooltip = tr('You are Feared'),  id = 'condition_Feared' }
-Icons[PlayerStates.GoshnarTaint1] = { clip = 22, tooltip = tr('You are GoshnarTaint'),  id = 'condition_GoshnarTaint1' }
-Icons[PlayerStates.GoshnarTaint2] = { clip = 23, tooltip = tr('You are GoshnarTaint'),  id = 'condition_GoshnarTaint2' }
-Icons[PlayerStates.GoshnarTaint3] = { clip = 24, tooltip = tr('You are GoshnarTaint'),  id = 'condition_GoshnarTaint3' }
-Icons[PlayerStates.GoshnarTaint4] = { clip = 25, tooltip = tr('You are GoshnarTaint'),  id = 'condition_GoshnarTaint4' }
-Icons[PlayerStates.GoshnarTaint5] = { clip = 26, tooltip = tr('You are GoshnarTaint'),  id = 'condition_GoshnarTaint5' }
+Icons[PlayerStates.GoshnarTaint1] = { clip = 22, tooltip = tr("Goshnar's Taint (Level 1)"),  id = 'condition_GoshnarTaint1' }
+Icons[PlayerStates.GoshnarTaint2] = { clip = 23, tooltip = tr("Goshnar's Taint (Level 2)"),  id = 'condition_GoshnarTaint2' }
+Icons[PlayerStates.GoshnarTaint3] = { clip = 24, tooltip = tr("Goshnar's Taint (Level 3)"),  id = 'condition_GoshnarTaint3' }
+Icons[PlayerStates.GoshnarTaint4] = { clip = 25, tooltip = tr("Goshnar's Taint (Level 4)"),  id = 'condition_GoshnarTaint4' }
+Icons[PlayerStates.GoshnarTaint5] = { clip = 26, tooltip = tr("Goshnar's Taint (Level 5)"),  id = 'condition_GoshnarTaint5' }
 Icons[PlayerStates.NewManaShield] = {  clip = 27, tooltip = tr('You are NewManaShield'), id = 'condition_NewManaShield' }
 Icons[PlayerStates.Agony] = { clip = 28, tooltip = tr('You are Agony'),  id = 'condition_Agony' }
 Icons[PlayerStates.Rewards] = { clip = 30, tooltip = tr('Rewards'),  id = 'condition_Rewards' }

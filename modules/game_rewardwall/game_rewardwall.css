@@ -210,7 +210,7 @@
 }
 
 .action-button {
-  font: cipsoftFont;
+  font: Verdana Bold-11px;
   --text-auto-resize: true;
 }
 .close-button {

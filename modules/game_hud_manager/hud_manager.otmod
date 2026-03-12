@@ -1,0 +1,9 @@
+Module
+  name: game_hud_manager
+  description: Central manager for movable HUDs
+  author: OTClient
+  website: https://github.com/edubart/otclient
+  sandboxed: true
+  scripts: [ hud_manager ]
+  @onLoad: init()
+  @onUnload: terminate()

@@ -205,7 +205,7 @@ ActivePreyPanel < Panel
       anchors.left: parent.left
       anchors.right: parent.right
       size: 155 15
-      font: verdana-11px-rounded
+      font: Verdana Bold-11px
       text: Automatic Bonus Rer...
       margin-left: 5
       text-offset: 20 1
@@ -232,7 +232,7 @@ ActivePreyPanel < Panel
       anchors.left: parent.left
       anchors.right: parent.right
       size: 155 15
-      font: verdana-11px-rounded
+      font: Verdana Bold-11px
       text: Lock Prey
       margin-left: 5
       text-offset: 20 1
@@ -364,7 +364,7 @@ InactivePreyPanel < Panel
     Label
       id: placeholder
       anchors.centerIn: parent
-      font: verdana-11px-rounded
+      font: Verdana Bold-11px
       text-align: center
       !text: tr('No creature selected')
       color: #cfcfcf
@@ -599,7 +599,7 @@ PreyCreatureListItem < UICheckBox
   padding: 3
   focusable: false
   text-align: left
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   color: #c0c0c0
   border-width: 1
   border-color: alpha
@@ -700,7 +700,7 @@ MainWindow
     anchors.bottom: parent.bottom
     size: 45 21
     text: Close
-    font: cipsoftFont
+    font: Verdana Bold-11px
     @onClick: modules.game_prey.hide()
 
   GoldLabel
@@ -768,7 +768,7 @@ PreyCreature < Panel
     margin-bottom: 7
     anchors.right: parent.right
     text: Inactive
-    font: verdana-11px-rounded
+    font: Verdana Bold-11px
     text-align: left
 
   ProgressBar
@@ -806,7 +806,7 @@ PreyTracker < MiniWindow
     margin-top: 2
     margin-left: 20
     margin-right: 50
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     height: 13
     color: #9d9d9dff
 
@@ -828,7 +828,7 @@ PreyTracker < MiniWindow
 
     Label
       !text: tr('Prey Creatures')
-      font: verdana-11px-rounded
+      font: Verdana Bold-11px
 
     HorizontalSeparator
       margin-top: 1
@@ -842,3 +842,4 @@ PreyTracker < MiniWindow
 
     PreyCreature
       id: slot3
+

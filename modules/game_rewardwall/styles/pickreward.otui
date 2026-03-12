@@ -62,7 +62,7 @@ MainWindow
     size: 45 20
     margin-top: 5
     text: Close
-    font: cipsoftFont
+    font: Verdana Bold-11px
     @onClick: modules.game_rewardwall.destroyPickReward(true)
 
   QtButton
@@ -74,6 +74,7 @@ MainWindow
     margin-right: 10
     text: Ok
     color: #FFFFFF
-    font: cipsoftFont
+    font: Verdana Bold-11px
     enabled: false
     @onClick: modules.game_rewardwall.onClickBtnOk()
+

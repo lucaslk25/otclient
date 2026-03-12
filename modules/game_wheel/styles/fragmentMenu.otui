@@ -83,7 +83,7 @@ Panel
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
       !text: tr('There is no mod that matches your filters.')
-      font:  Verdana Bold-11px
+      font: Verdana Bold-11px
       color: #c0c0c0
       margin-top: 2
   Panel
@@ -698,3 +698,4 @@ Panel
 
       FragmentPanel
         id: fragmentPanel29
+

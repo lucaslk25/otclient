@@ -1,5 +1,5 @@
 TextMessageLabel < UILabel
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   text-align: center
   text-wrap: true
   text-auto-resize: true
@@ -39,3 +39,4 @@ Panel
     anchors.horizontalCenter: parent.horizontalCenter
     margin-bottom: 7
     width: 300
+

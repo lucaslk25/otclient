@@ -1,5 +1,5 @@
 TextListQuestLog < Panel
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   width: 192
   text-offset: 24 5
   text-align: topLeft
@@ -30,7 +30,7 @@ TextListQuestLog < Panel
     pixels-scroll: true
 
 MultiLineQuestLog < Panel
-  font: verdana-11px-antialised
+  font: Verdana Bold-11px
   width: 192
   text-offset: 24 5
   text-align: topLeft
@@ -142,7 +142,7 @@ QuestLogTracker < MiniWindow
     margin-top: 2
     margin-left: 20
     margin-right: 50
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     height: 13
     color: #9d9d9dff
 
@@ -199,7 +199,9 @@ QuestLogTracker < MiniWindow
         text: Add  Tracked  Quest
         margin-left: 20
         margin-right: 20
-        color: white
+        color: #c0c0c0ff
+        ttf-font: verdana-bold
+        ttf-font-size: 8
         @onClick: modules.game_questlog.show()
 
 
@@ -208,7 +210,7 @@ ButtonTrackerMenuOption < UIButton
   text-align: left
   color: white
   background-color: alpha
-  font: verdana-11px-rounded
+  font: Verdana Bold-11px
   padding: 3 6
 
   $hover:

@@ -11,7 +11,7 @@ MainWindow
     id: headerLabel
     !text: tr('Edit Name')
     text-align: center
-    font: verdana-11px-antialised
+    font: Verdana Bold-11px
     color: #909090
     anchors.top: parent.top
     anchors.left: parent.left
@@ -66,7 +66,7 @@ MainWindow
     margin-bottom: 7
     margin-top: 10
     !text: tr('Cancel')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     size: 43 20
     color: #ffffff
 
@@ -79,6 +79,7 @@ MainWindow
     margin-bottom: 7
     margin-top: 10
     !text: tr('Ok')
-    font: cipsoftFont
+    font: Verdana Bold-11px
     size: 43 20
     color: #ffffff
+

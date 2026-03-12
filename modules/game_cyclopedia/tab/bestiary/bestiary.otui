@@ -10,7 +10,7 @@ UIWidget
     anchors.right: parent.right
     margin-bottom: 35
     !text: tr('Search')
-    font: small-9px
+    font: Verdana Bold-11px
     text-offset: 0 -1
     color: #C0C0C0
     @onClick:  modules.game_cyclopedia.Cyclopedia.BestiarySearch(self:getText())
@@ -22,7 +22,7 @@ UIWidget
     margin-bottom: 1
     placeholder: Type to search
     placeholder-color: #6E706F
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     color: #C0C0C0
     padding-top: 1
     shader: Map - Party
@@ -581,6 +581,7 @@ UIWidget
           margin-bottom: 2
           step: 37
           pixels-scroll: true
+
 
 
 

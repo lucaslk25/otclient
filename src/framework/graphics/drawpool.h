@@ -137,6 +137,7 @@ protected:
         REPEATED_RECT,
         BOUNDING_RECT,
         UPSIDEDOWN_RECT,
+        ROUNDED_RECT,
     };
 
     struct DrawMethod

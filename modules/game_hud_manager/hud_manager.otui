@@ -1,0 +1,95 @@
+HudManagerListRow < GlassListRow
+
+HudManagerConditionCheck < GlassCheckBox
+
+HudManagerWindow < GlassWindow
+  id: hudManagerWindow
+  size: 760 500
+  anchors.centerIn: parent
+  visible: false
+  draggable: true
+  @onEscape: modules.game_hud_manager.close()
+
+  UIWidget
+    id: titleBar
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 40
+    background-color: #0a0a1eee
+    background-radius: 12
+    border-width-bottom: 1
+    border-color-bottom: #ffffff15
+    phantom: true
+
+    Label
+      id: titleLabel
+      !text: tr('HUD Manager')
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: parent.verticalCenter
+      text-align: center
+      color: #c8c8e0ff
+      font: Verdana Bold-11px
+
+    GlassButtonSmall
+      id: closeButton
+      !text: tr('X')
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-right: 8
+      size: 24 24
+      @onClick: modules.game_hud_manager.close()
+
+  GlassPanel
+    id: hudListPanel
+    anchors.left: parent.left
+    anchors.top: titleBar.bottom
+    anchors.bottom: parent.bottom
+    width: 240
+    margin-left: 10
+    margin-top: 10
+    margin-bottom: 10
+
+    Label
+      id: listSectionLabel
+      !text: tr('HUD Elements')
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 24
+      margin-top: 8
+      margin-left: 10
+      margin-right: 10
+      text-align: left
+      color: #c8c8e0ff
+      font: Verdana Bold-11px
+
+    UIWidget
+      id: hudListContainer
+      anchors.top: listSectionLabel.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      margin: 8
+      layout:
+        type: verticalBox
+        spacing: 2
+
+  GlassPanel
+    id: hudDetailsPanel
+    anchors.left: hudListPanel.right
+    anchors.right: parent.right
+    anchors.top: titleBar.bottom
+    anchors.bottom: parent.bottom
+    margin-left: 10
+    margin-right: 10
+    margin-top: 10
+    margin-bottom: 10
+
+    UIWidget
+      id: hudDetailsContent
+      anchors.fill: parent
+      margin: 10
+      layout:
+        type: verticalBox
+        spacing: 8

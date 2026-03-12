@@ -126,7 +126,7 @@ MiniWindow
     margin-top: 2
     margin-left: 20
     margin-right: 50
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     height: 13
     color: #9d9d9dff
     !text: tr('Drop Tracker')

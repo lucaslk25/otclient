@@ -1,5 +1,5 @@
 HotkeyListLabel < UILabel
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   background-color: alpha
   text-offset: 2 0
   focusable: true
@@ -244,3 +244,4 @@ HotkeyAssignWindow < MainWindow
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     @onClick: self:getParent():destroy()
+

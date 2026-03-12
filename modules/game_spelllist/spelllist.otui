@@ -1,5 +1,5 @@
 SpellListLabel < Label
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   background-color: alpha
   text-offset: 42 3
   focusable: true
@@ -15,7 +15,7 @@ SpellListLabel < Label
 
 SpellInfoLabel < Label
   width: 70
-  font: verdana-11px-monochrome
+  font: Verdana Bold-11px
   text-align: right
   margin-left: 10
   margin-top: 5
@@ -201,7 +201,7 @@ MainWindow
     anchors.top: labelPremium.bottom
     anchors.left: spellList.right
     width: 70
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     !text: tr('Vocation')
     margin-top: 30
     margin-left: 20
@@ -260,7 +260,7 @@ MainWindow
     anchors.top: labelPremium.bottom
     anchors.left: labelVocationFilter.right
     width: 70
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     !text: tr('Group')
     margin-top: 30
     margin-left: 20
@@ -303,7 +303,7 @@ MainWindow
     anchors.top: labelPremium.bottom
     anchors.left: labelGroupFilter.right
     width: 70
-    font: verdana-11px-monochrome
+    font: Verdana Bold-11px
     !text: tr('Premium')
     margin-top: 30
     margin-left: 20
@@ -332,3 +332,4 @@ MainWindow
     margin-top: 3
     !text: tr('Yes')
     width: 75
+

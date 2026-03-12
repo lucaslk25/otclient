@@ -101,6 +101,8 @@ void DrawPool::addCoords(CoordsBuffer& buffer, const DrawMethod& method)
 {
     if (method.type == DrawMethodType::BOUNDING_RECT) {
         buffer.addBoudingRect(method.dest, method.intValue);
+    } else if (method.type == DrawMethodType::ROUNDED_RECT) {
+        buffer.addFilledRoundedRect(method.dest, method.intValue);
     } else if (method.type == DrawMethodType::RECT) {
         buffer.addRect(method.dest, method.src);
     } else if (method.type == DrawMethodType::TRIANGLE) {
@@ -153,6 +155,9 @@ bool DrawPool::updateHash(const DrawMethod& method, const Texture* texture, cons
             if (!method.b.isNull()) stdext::hash_union(hash, method.b.hash());
             if (!method.c.isNull()) stdext::hash_union(hash, method.c.hash());
         } else if (method.type == DrawMethodType::BOUNDING_RECT) {
+            if (method.intValue) stdext::hash_combine(hash, method.intValue);
+        } else if (method.type == DrawMethodType::ROUNDED_RECT) {
+            if (method.dest.isValid()) stdext::hash_union(hash, method.dest.hash());
             if (method.intValue) stdext::hash_combine(hash, method.intValue);
         } else {
             if (method.dest.isValid()) stdext::hash_union(hash, method.dest.hash());

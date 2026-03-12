@@ -44,6 +44,9 @@ Module
     - game_stash
     - game_healthcircle
     - game_shop
+    - game_ui_edit
+    - game_hud_manager
+    - game_specialconditionhud
     - game_screenshot
     - game_highscore
     - game_blessing

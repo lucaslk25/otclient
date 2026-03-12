@@ -64,6 +64,34 @@ UIWidget
 
       $!mobile:
         visible: false
+
+  SmallReversedQtPanel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 7
+    height: 22
+
+    OptionCheckBox
+      id: showSpecialConditionHUD
+      !text: tr('Show special conditions on HUD')
+      !tooltip: tr('Floating panel with icons for poison, burn, hungry, etc. Movable and orientation toggle.')
+
+  SmallReversedQtPanel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    height: 22
+    margin-top: 7
+    OptionScaleScroll
+      id: conditionHUDBackgroundOpacity
+      anchors.fill: parent
+      &minimumScrollValue: 0
+      &maximumScrollValue: 100
+      &scrollSize: 21
+      @onSetup: |
+        local value = modules.client_options.getOption('conditionHUDBackgroundOpacity')
+        self:setText(tr('Condition HUD background opacity: %s%%', value or 87))
       
   SmallReversedQtPanel
     anchors.left: parent.left
@@ -77,6 +105,10 @@ UIWidget
       &minimumScrollValue: 1
       &maximumScrollValue: 5
       &scrollSize: 21
+      @onSetup: |
+        local value = modules.client_options.getOption('hudScale')
+        local display = math.max((value or 0) + 0.5, 1)
+        self:setText(string.format('HUD Scale: %sx', display))
 
   SmallReversedQtPanel
     anchors.left: parent.left
@@ -90,6 +122,11 @@ UIWidget
       &minimumScrollValue: 1
       &maximumScrollValue: 9
       &scrollSize: 21
+      @onSetup: |
+        local value = modules.client_options.getOption('creatureInformationScale')
+        if value == 0 then value = g_window.getDisplayDensity() - 0.5 else value = value / 2 end
+        local display = math.max(value + 0.5, 1)
+        self:setText(string.format('Creature Information Scale: %sx', display))
 
   SmallReversedQtPanel
     anchors.left: parent.left
@@ -104,6 +141,11 @@ UIWidget
       &minimumScrollValue: 1
       &maximumScrollValue: 9
       &scrollSize: 21
+      @onSetup: |
+        local value = modules.client_options.getOption('staticTextScale')
+        if value == 0 then value = g_window.getDisplayDensity() - 0.5 else value = value / 2 end
+        local display = math.max(value + 0.5, 1)
+        self:setText(string.format('Message Scale: %sx', display))
 
   SmallReversedQtPanel
     anchors.left: parent.left
@@ -118,3 +160,8 @@ UIWidget
       &minimumScrollValue: 1
       &maximumScrollValue: 9
       &scrollSize: 21
+      @onSetup: |
+        local value = modules.client_options.getOption('animatedTextScale')
+        if value == 0 then value = g_window.getDisplayDensity() - 0.5 else value = value / 2 end
+        local display = math.max(value + 0.5, 1)
+        self:setText(tr('Animated Message Scale: %sx', display))
